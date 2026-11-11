@@ -751,3 +751,17 @@
   inset-inline: auto;
   transform: translateX(-50%);
 }
+
+/* Button label preference: text+icon or icon-only */
+.reader--icons .reader__toolbar .tool-btn span,
+.reader--icons .reader__toolbar .marker-widths button span,
+.reader--icons .reader__toolbar .category-select > span,
+.reader--icons .page-dock .view-menu__trigger span {
+  display: none;
+}
+@media (max-width: 720px) {
+  .reader--labels .reader__toolbar .tool-btn span,
+  .reader--labels .reader__toolbar .marker-widths button span {
+    display: inline;
+  }
+}

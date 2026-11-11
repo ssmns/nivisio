@@ -34,6 +34,8 @@ interface PageDockProps {
   onReadingTheme: (theme: ReaderTheme) => void
   showText: boolean
   onShowText: (show: boolean) => void
+  showLabels: boolean
+  onShowLabels: (show: boolean) => void
   onPageInput: (value: string) => void
   onSubmitPage: () => void
   onPrev: () => void
@@ -62,6 +64,8 @@ export function PageDock({
   onReadingTheme,
   showText,
   onShowText,
+  showLabels,
+  onShowLabels,
   onPageInput,
   onSubmitPage,
   onPrev,
@@ -148,6 +152,8 @@ export function PageDock({
         onReadingTheme={onReadingTheme}
         showText={showText}
         onShowText={onShowText}
+        showLabels={showLabels}
+        onShowLabels={onShowLabels}
       />
 
       <span className="page-dock__label">{pageLabel}</span>

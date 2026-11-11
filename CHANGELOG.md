@@ -2,6 +2,17 @@
 
 All notable changes to nivisio are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] — 2026-11-12
+
+### Fixed
+
+- Text annotations no longer wrap to a second line when they should fit on one line. The measured box now includes a safety margin and uses up to 86% of the page width before wrapping.
+- Reader stage measurements now attach after the document mounts, so fit-height and zoom gestures work reliably.
+- Added Ctrl/⌘ + mouse wheel and two-finger pinch zoom (page zoom, not browser zoom).
+- Added a persisted button-label preference: text + icon or icon only.
+
+---
+
 ## [1.1.0] — 2026-11-12
 
 ### Added

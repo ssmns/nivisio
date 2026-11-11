@@ -22,6 +22,8 @@ interface ViewMenuProps {
   onReadingTheme: (theme: ReaderTheme) => void
   showText: boolean
   onShowText: (show: boolean) => void
+  showLabels: boolean
+  onShowLabels: (show: boolean) => void
 }
 
 const VIEWS: { id: ViewMode; label: string; en: string; icon: typeof Square }[] = [
@@ -45,6 +47,8 @@ export function ViewMenu({
   onReadingTheme,
   showText,
   onShowText,
+  showLabels,
+  onShowLabels,
 }: ViewMenuProps) {
   const { t } = useI18n()
   const [open, setOpen] = useState(false)
@@ -190,6 +194,26 @@ export function ViewMenu({
                 {t(label, en)}
               </button>
             ))}
+          </div>
+
+          <div className="popover__title">
+            {t('متن کنار آیکون‌ها', 'Text beside icons')}
+          </div>
+          <div className="view-options view-options--two">
+            <button
+              type="button"
+              className={showLabels ? 'is-active' : ''}
+              onClick={() => onShowLabels(true)}
+            >
+              {t('متن + آیکون', 'Text + icon')}
+            </button>
+            <button
+              type="button"
+              className={!showLabels ? 'is-active' : ''}
+              onClick={() => onShowLabels(false)}
+            >
+              {t('فقط آیکون', 'Icon only')}
+            </button>
           </div>
 
           <div className="popover__title">{t('متن‌های روی صفحه', 'Text on the page')}</div>

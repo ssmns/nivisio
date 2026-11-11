@@ -358,7 +358,8 @@
   font-weight: 500;
   line-height: 1.6;
   white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
   unicode-bidi: plaintext;
   cursor: text;
   overflow: visible;

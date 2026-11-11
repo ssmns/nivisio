@@ -7,10 +7,11 @@ export interface TextBoxSize {
 }
 
 const REFERENCE_WIDTH = 1000
-const MAX_WIDTH = 0.72
+const MAX_WIDTH = 0.86
 const LINE_HEIGHT = 1.6
 const PADDING_X = 8
 const PADDING_Y = 4
+const SAFETY_X = 10
 
 /**
  * Measures a text block in normalized page units. `fontSize` is normalized
@@ -66,7 +67,10 @@ export function measureTextBox(
     }
   }
 
-  const widthPx = Math.min(MAX_WIDTH * REFERENCE_WIDTH, Math.max(48, maxLineWidth + PADDING_X))
+  const widthPx = Math.min(
+    MAX_WIDTH * REFERENCE_WIDTH,
+    Math.max(48, Math.ceil(maxLineWidth) + PADDING_X + SAFETY_X),
+  )
   const heightPx = Math.max(fontPx * LINE_HEIGHT + PADDING_Y, lines * fontPx * LINE_HEIGHT + PADDING_Y)
   return {
     width: widthPx / REFERENCE_WIDTH,

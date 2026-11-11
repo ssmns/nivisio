@@ -19,6 +19,9 @@ export function useReaderPreferences() {
   const [showText, setShowText] = useState(
     () => localStorage.getItem('bnote-show-text') !== '0',
   )
+  const [showLabels, setShowLabels] = useState(
+    () => localStorage.getItem('bnote-show-labels') !== '0',
+  )
 
   useEffect(() => {
     localStorage.setItem('bnote-view-mode', viewMode)
@@ -26,7 +29,8 @@ export function useReaderPreferences() {
     localStorage.setItem('bnote-reading-theme', readingTheme)
     localStorage.setItem('bnote-snap', snapEnabled ? '1' : '0')
     localStorage.setItem('bnote-show-text', showText ? '1' : '0')
-  }, [viewMode, fitMode, readingTheme, snapEnabled, showText])
+    localStorage.setItem('bnote-show-labels', showLabels ? '1' : '0')
+  }, [viewMode, fitMode, readingTheme, snapEnabled, showText, showLabels])
 
   return {
     viewMode,
@@ -39,5 +43,7 @@ export function useReaderPreferences() {
     setSnapEnabled,
     showText,
     setShowText,
+    showLabels,
+    setShowLabels,
   }
 }

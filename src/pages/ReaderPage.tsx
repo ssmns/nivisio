@@ -6,6 +6,8 @@ import { db, deleteNotebookPageCascade, newId, notePageKey, pdfPageKey } from '.
 import { usePdfDocument } from '../hooks/usePdfDocument'
 import { useReaderActions } from '../hooks/useReaderActions'
 import { useReaderPreferences } from '../hooks/useReaderPreferences'
+import { useReaderZoomGestures } from '../hooks/useReaderZoomGestures'
+import { useReaderKeyboard } from '../hooks/useReaderKeyboard'
 import { useReaderExport } from '../hooks/useReaderExport'
 import { useI18n } from '../lib/i18n'
 import {
@@ -133,6 +135,8 @@ export function ReaderPage() {
     setSnapEnabled,
     showText,
     setShowText,
+    showLabels,
+    setShowLabels,
   } = useReaderPreferences()
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
 
@@ -246,22 +250,33 @@ export function ReaderPage() {
   }, [doc?.id, currentIndex, currentKey, currentPage, pages])
 
   useEffect(() => {
-    const stage = stageRef.current
-    if (!stage) return
-    const update = () => {
-      const style = window.getComputedStyle(stage)
-      const paddingTop = Number.parseFloat(style.paddingTop) || 0
-      const paddingBottom = Number.parseFloat(style.paddingBottom) || 0
-      setStageSize({
-        width: stage.clientWidth,
-        height: Math.max(0, stage.clientHeight - paddingTop - paddingBottom),
-      })
+    let frame = 0
+    let observer: ResizeObserver | null = null
+    const attach = () => {
+      const stage = stageRef.current
+      if (!stage) {
+        frame = window.requestAnimationFrame(attach)
+        return
+      }
+      const update = () => {
+        const style = window.getComputedStyle(stage)
+        const paddingTop = Number.parseFloat(style.paddingTop) || 0
+        const paddingBottom = Number.parseFloat(style.paddingBottom) || 0
+        setStageSize({
+          width: stage.clientWidth,
+          height: Math.max(0, stage.clientHeight - paddingTop - paddingBottom),
+        })
+      }
+      update()
+      observer = new ResizeObserver(update)
+      observer.observe(stage)
     }
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(stage)
-    return () => observer.disconnect()
-  }, [])
+    attach()
+    return () => {
+      window.cancelAnimationFrame(frame)
+      observer?.disconnect()
+    }
+  }, [doc?.id])
 
   useEffect(() => {
     if (viewMode !== 'continuous') return
@@ -364,41 +379,13 @@ export function ReaderPage() {
     shapeOpen ||
     guideOpen ||
     Boolean(selection)
+  useReaderZoomGestures({
+    stageRef,
+    enabled: !modalOpen && stageSize.width > 0,
+    zoom,
+    onZoom: setZoom,
+  })
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null
-      if (
-        modalOpen ||
-        target?.closest('input, textarea, select, [contenteditable="true"]')
-      ) {
-        return
-      }
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        setActiveObjectId(null)
-        setSelectedIds([])
-        setSelection(null)
-        window.getSelection()?.removeAllRanges()
-        return
-      }
-      const nextKey = isRtl ? 'ArrowLeft' : 'ArrowRight'
-      const previousKey = isRtl ? 'ArrowRight' : 'ArrowLeft'
-      if (event.key === nextKey || event.key === 'PageDown' || event.key === ' ') {
-        event.preventDefault()
-        goToIndex(currentIndex + pageStep)
-      } else if (event.key === previousKey || event.key === 'PageUp') {
-        event.preventDefault()
-        goToIndex(currentIndex - pageStep)
-      } else if (event.key === '+' || event.key === '=') {
-        setZoom((current) => clamp(current + 0.15, 0.6, 2.4))
-      } else if (event.key === '-') {
-        setZoom((current) => clamp(current - 0.15, 0.6, 2.4))
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [currentIndex, goToIndex, isRtl, modalOpen, pageStep])
 
   const pageNumber = currentPage?.kind === 'pdf' ? currentPage.pdfPage ?? 1 : 0
   const pageRef = currentKey
@@ -500,6 +487,25 @@ export function ReaderPage() {
     await actions.deleteSelected(selectedIds, annotations)
     setSelectedIds([])
   }
+
+  useReaderKeyboard({
+    modalOpen,
+    isRtl,
+    currentIndex,
+    pageStep,
+    goToIndex,
+    setZoom,
+    activeObjectId,
+    annotations,
+    selectedIds,
+    deleteAnnotation,
+    deleteSelected: () => {
+      void deleteSelected()
+    },
+    setActiveObjectId,
+    setSelectedIds,
+    setSelection,
+  })
 
   const recolorSelected = async (chosenColor: string) => {
     await actions.recolorSelected(selectedIds, annotations, chosenColor)
@@ -797,33 +803,13 @@ export function ReaderPage() {
     toast.show(t('برگه یادداشت و نشانه‌هایش حذف شد.', 'Notebook page and its marks were deleted.'))
   }
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (modalOpen) return
-      if (event.key !== 'Delete' && event.key !== 'Backspace') return
-      const target = event.target as HTMLElement | null
-      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return
-      if (activeObjectId) {
-        const annotation = annotations.find((item) => item.id === activeObjectId)
-        if (annotation) {
-          event.preventDefault()
-          void deleteAnnotation(annotation)
-        }
-      } else if (selectedIds.length > 0) {
-        event.preventDefault()
-        void deleteSelected()
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [activeObjectId, annotations, deleteAnnotation, deleteSelected, modalOpen, selectedIds])
   if (doc === undefined) {
     return (
       <div className="reader-state">
         <Loader2 size={26} className="spin" />
         <p>{t('در حال باز کردن سند…', 'Opening document…')}</p>
         <button type="button" className="btn btn--ghost" onClick={() => navigate('/')}>
-          t('بازگشت به کتابخانه', 'Back to library')
+          {t('بازگشت به کتابخانه', 'Back to library')}
         </button>
       </div>
     )
@@ -835,7 +821,7 @@ export function ReaderPage() {
         <h2>{t('سند پیدا نشد', 'Document not found')}</h2>
         <p>{t('ممکن است حذف شده باشد.', 'It may have been deleted.')}</p>
         <button type="button" className="btn btn--primary" onClick={() => navigate('/')}>
-          t('بازگشت به کتابخانه', 'Back to library')
+          {t('بازگشت به کتابخانه', 'Back to library')}
         </button>
       </div>
     )
@@ -964,7 +950,11 @@ export function ReaderPage() {
   }
 
   return (
-    <div className={`reader${panelOpen ? ' reader--with-panel' : ''}`}>
+    <div
+      className={`reader${panelOpen ? ' reader--with-panel' : ''} ${
+        showLabels ? 'reader--labels' : 'reader--icons'
+      }`}
+    >
       <ReaderHeader
         doc={doc}
         pageLabel={pageLabel}
@@ -1140,6 +1130,8 @@ export function ReaderPage() {
             onReadingTheme={setReadingTheme}
             showText={showText}
             onShowText={setShowText}
+            showLabels={showLabels}
+            onShowLabels={setShowLabels}
             onPageInput={setPageInput}
             onSubmitPage={submitPageInput}
             onPrev={() => goToIndex(currentIndex - pageStep)}
