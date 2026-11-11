@@ -1,5 +1,4 @@
 /* ---------- annotation tools ---------- */
-
 .btn--sm {
   height: 32px;
   padding: 0 11px;
@@ -314,6 +313,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.chart-box.is-object-selected {
+  overflow: visible;
 }
 .chart-box {
   background: #fff;
@@ -677,7 +679,6 @@ svg.ink-layer.is-object-selected {
   text-overflow: ellipsis;
 }
 
-
 .grid-preview--isometric {
   background-image:
     repeating-linear-gradient(60deg, transparent 0 12px, #dfe6f0 12px 13px),
@@ -789,7 +790,6 @@ svg.ink-layer.is-object-selected {
   border: 0;
   background: linear-gradient(135deg, transparent 47%, var(--accent) 48% 50%, transparent 51%);
 }
-
 
 .grid-preview--tri30 {
   background-image:

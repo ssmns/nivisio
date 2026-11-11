@@ -48,6 +48,7 @@ import { PageSlot, type PageSurfaceProps } from '../components/reader/PageSlot'
 import { ReaderBars } from '../components/reader/ReaderBars'
 import { ReaderModals } from '../components/reader/ReaderModals'
 import { ReaderPanel } from '../components/reader/ReaderPanel'
+import { ReaderState } from '../components/reader/ReaderState'
 import { SelectionPopover } from '../components/reader/SelectionPopover'
 import type {
   NoteTarget,
@@ -115,6 +116,7 @@ export function ReaderPage() {
   const [pageTemplate, setPageTemplate] = useState<PageTemplateState | null>(null)
   const [linkRect, setLinkRect] = useState<NormRect | null>(null)
   const [chartOpen, setChartOpen] = useState(false)
+  const [chartTarget, setChartTarget] = useState<Annotation | null>(null)
   const [shapeOpen, setShapeOpen] = useState(false)
   const [guideOpen, setGuideOpen] = useState(false)
   const [pendingShape, setPendingShape] = useState<ShapeConfig | null>(null)
@@ -624,8 +626,18 @@ export function ReaderPage() {
   }
 
   const chooseChart = (config: ChartConfig) => {
-    setPendingChart(config)
     setChartOpen(false)
+    if (chartTarget) {
+      void updateAnnotation(chartTarget.id, {
+        chart: config,
+        color: config.color,
+        updatedAt: Date.now(),
+      })
+      setChartTarget(null)
+      toast.show(t('نمودار ویرایش شد.', 'Chart updated.'), { tone: 'success' })
+      return
+    }
+    setPendingChart(config)
     setTool('chart')
     toast.show(t('روی برگ کلیک کنید تا نمودار همان‌جا قرار بگیرد.', 'Click on the page to place the chart.'))
   }
@@ -804,38 +816,14 @@ export function ReaderPage() {
   }
 
   if (doc === undefined) {
-    return (
-      <div className="reader-state">
-        <Loader2 size={26} className="spin" />
-        <p>{t('در حال باز کردن سند…', 'Opening document…')}</p>
-        <button type="button" className="btn btn--ghost" onClick={() => navigate('/')}>
-          {t('بازگشت به کتابخانه', 'Back to library')}
-        </button>
-      </div>
-    )
+    return <ReaderState variant="loading" onBack={() => navigate('/')} />
   }
-
   if (!doc) {
-    return (
-      <div className="reader-state">
-        <h2>{t('سند پیدا نشد', 'Document not found')}</h2>
-        <p>{t('ممکن است حذف شده باشد.', 'It may have been deleted.')}</p>
-        <button type="button" className="btn btn--primary" onClick={() => navigate('/')}>
-          {t('بازگشت به کتابخانه', 'Back to library')}
-        </button>
-      </div>
-    )
+    return <ReaderState variant="missing" onBack={() => navigate('/')} />
   }
-
   if (!currentPage) {
-    return (
-      <div className="reader-state">
-        <Loader2 size={26} className="spin" />
-        <p>{t('در حال ساخت صفحات…', 'Building pages…')}</p>
-      </div>
-    )
+    return <ReaderState variant="building" />
   }
-
   const collection = collections.find((item) => item.id === doc.collectionId)
   const pagePercent = Math.round(doc.progress * 100)
   const noteTargetTitle = noteTarget?.annotation
@@ -921,6 +909,10 @@ export function ReaderPage() {
     },
     onAddText: addText,
     onEditText: (annotation, pageAspect) => setTextTarget({ annotation, pageAspect }),
+    onEditChart: (annotation) => {
+      setChartTarget(annotation)
+      setChartOpen(true)
+    },
     onLassoSelect: (ids) => {
       setActiveObjectId(null)
       setSelectedIds(ids)
@@ -998,7 +990,10 @@ export function ReaderPage() {
         }}
         onCategory={setCategory}
         onImage={() => imageInputRef.current?.click()}
-        onChart={() => setChartOpen(true)}
+        onChart={() => {
+          setChartTarget(null)
+          setChartOpen(true)
+        }}
         onLink={() => selectTool('link')}
         onNote={() => selectTool('note')}
         onShape={() => setShapeOpen(true)}
@@ -1151,6 +1146,20 @@ export function ReaderPage() {
             onRotateObject={(delta) => {
               void rotateActiveObject(delta)
             }}
+            onEditObject={(annotation) => {
+              if (annotation.type === 'chart') {
+                setChartTarget(annotation)
+                setChartOpen(true)
+              } else if (annotation.type === 'text') {
+                setTextTarget({
+                  annotation,
+                  pageAspect:
+                    currentPage.kind === 'note'
+                      ? notebookSize.height / notebookSize.width
+                      : 1.414,
+                })
+              }
+            }}
             onDeleteObject={(annotation) => {
               void deleteAnnotation(annotation)
             }}
@@ -1262,8 +1271,12 @@ export function ReaderPage() {
           setTool('select')
         }}
         chartOpen={chartOpen}
+        chartInitial={chartTarget?.chart ?? null}
         onSaveChart={chooseChart}
-        onCloseChart={() => setChartOpen(false)}
+        onCloseChart={() => {
+          setChartOpen(false)
+          setChartTarget(null)
+        }}
         shapeOpen={shapeOpen}
         onSaveShape={chooseShape}
         onCloseShape={() => setShapeOpen(false)}

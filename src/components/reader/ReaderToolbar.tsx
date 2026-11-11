@@ -1,4 +1,3 @@
-import { useEffect, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import {
   Bandage,
   Magnet,
@@ -12,7 +11,6 @@ import {
   Pencil,
   PenLine,
   Type,
-  SlidersHorizontal,
 } from 'lucide-react'
 import { InsertMenu } from '../InsertMenu'
 import { PenPicker } from '../PenPicker'
@@ -84,52 +82,6 @@ export function ReaderToolbar({
   onEditPage,
 }: ReaderToolbarProps) {
   const { lang, t } = useI18n()
-  const [tablet, setTablet] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth > 720 && window.innerWidth <= 1180,
-  )
-  const [toolbarWidth, setToolbarWidth] = useState(() => {
-    const stored = Number(localStorage.getItem('bnote-toolbar-width'))
-    return Number.isFinite(stored) && stored >= 320 ? stored : 760
-  })
-  const [expanded, setExpanded] = useState(
-    () => localStorage.getItem('bnote-toolbar-expanded') === '1',
-  )
-
-  useEffect(() => {
-    const onResize = () =>
-      setTablet(window.innerWidth > 720 && window.innerWidth <= 1180)
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem('bnote-toolbar-width', String(toolbarWidth))
-  }, [toolbarWidth])
-
-  useEffect(() => {
-    localStorage.setItem('bnote-toolbar-expanded', expanded ? '1' : '0')
-  }, [expanded])
-
-  const startToolbarResize = (event: ReactPointerEvent<HTMLSpanElement>) => {
-    if (!tablet) return
-    event.preventDefault()
-    event.stopPropagation()
-    const startX = event.clientX
-    const startWidth = toolbarWidth
-    const move = (pointerEvent: PointerEvent) => {
-      const max = Math.min(window.innerWidth - 24, 1100)
-      setToolbarWidth(
-        Math.min(max, Math.max(320, startWidth + (pointerEvent.clientX - startX))),
-      )
-    }
-    const finish = () => {
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerup', finish)
-    }
-    window.addEventListener('pointermove', move)
-    window.addEventListener('pointerup', finish)
-  }
-
   const tools: {
     key: string
     label: string
@@ -209,28 +161,7 @@ export function ReaderToolbar({
   ]
 
   return (
-    <div
-      className={`reader__toolbar${tablet ? ' reader__toolbar--floating' : ''}${
-        tablet && !expanded ? ' reader__toolbar--compact' : ''
-      }`}
-      style={tablet ? { width: `${Math.min(toolbarWidth, 1100)}px` } : undefined}
-    >
-      <div className="tool-group" role="group" aria-label={t('ابزارها', 'Tools')}>
-        {tools.map(({ key, label, icon: Icon, active, onClick }) => (
-          <button
-            key={key}
-            type="button"
-            className={`tool-btn${active ? ' is-active' : ''}`}
-            onClick={onClick}
-            title={label}
-            aria-label={label}
-          >
-            <Icon size={17} />
-            <span>{label}</span>
-          </button>
-        ))}
-      </div>
-
+    <div className="reader__toolbar">
       {tool === 'pen' && (
         <PenPicker
           value={penStyle}
@@ -251,11 +182,29 @@ export function ReaderToolbar({
               title={t(`هایلایتر ${width.name}`, `Highlighter ${width.nameEn}`)}
             >
               <StrokeWidthIcon scale={width.value} />
-              <span>{lang === 'en' ? width.nameEn : width.name}</span>
+              <span className="marker-width-label">
+                {lang === 'en' ? width.nameEn : width.name}
+              </span>
             </button>
           ))}
         </div>
       )}
+
+      <div className="tool-group" role="group" aria-label={t('ابزارها', 'Tools')}>
+        {tools.map(({ key, label, icon: Icon, active, onClick }) => (
+          <button
+            key={key}
+            type="button"
+            className={`tool-btn${active ? ' is-active' : ''}`}
+            onClick={onClick}
+            title={label}
+            aria-label={label}
+          >
+            <Icon size={17} />
+            <span>{label}</span>
+          </button>
+        ))}
+      </div>
 
       {(tool === 'select' ||
         tool === 'highlight' ||
@@ -280,7 +229,7 @@ export function ReaderToolbar({
 
       <button
         type="button"
-        className={`tool-btn toolbar-snap${snapEnabled ? ' is-active' : ''}`}
+        className={`tool-btn ${snapEnabled ? ' is-active' : ''}`}
         onClick={onSnap}
         title={t('چسبیدن به گرید', 'Snap to grid')}
       >
@@ -307,7 +256,7 @@ export function ReaderToolbar({
 
       <button
         type="button"
-        className="tool-btn tool-btn--page toolbar-page"
+        className="tool-btn tool-btn--page "
         onClick={onAddPage}
         title={t('افزودن برگه یادداشت بعد از این برگ', 'Insert a note page after this page')}
       >
@@ -318,24 +267,12 @@ export function ReaderToolbar({
       {notebookPage && (
         <button
           type="button"
-          className="tool-btn tool-btn--notebook toolbar-page"
+          className="tool-btn tool-btn--notebook "
           onClick={onEditPage}
           title={t('تنظیمات برگه یادداشت', 'Note page settings')}
         >
           <LayoutGrid size={16} />
           <span>{notebookGridName ?? t('برگه', 'Page')}</span>
-        </button>
-      )}
-
-      {tablet && (
-        <button
-          type="button"
-          className={`tool-btn toolbar-more${expanded ? ' is-active' : ''}`}
-          onClick={() => setExpanded((value) => !value)}
-          title={expanded ? t('حالت خلاصه', 'Compact mode') : t('نمایش همه ابزارها', 'Show all tools')}
-        >
-          <SlidersHorizontal size={16} />
-          <span>{expanded ? t('خلاصه', 'Compact') : t('همه ابزارها', 'All tools')}</span>
         </button>
       )}
 
@@ -350,14 +287,6 @@ export function ReaderToolbar({
         </select>
       </label>
 
-      {tablet && (
-        <span
-          className="toolbar-resize"
-          onPointerDown={startToolbarResize}
-          title={t('تغییر عرض نوار ابزار', 'Resize toolbar')}
-          aria-hidden="true"
-        />
-      )}
     </div>
   )
 }

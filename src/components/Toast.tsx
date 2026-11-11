@@ -49,7 +49,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         action: options?.action,
       }
       setItems((current) => [...current.slice(-2), item])
-      const timer = window.setTimeout(() => remove(id), options?.duration ?? 4600)
+      const timer = window.setTimeout(() => remove(id), options?.duration ?? 2800)
       timers.current.push(timer)
     },
     [remove],

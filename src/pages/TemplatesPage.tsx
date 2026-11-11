@@ -98,7 +98,7 @@ export function TemplatesPage() {
                   }}
                 >
                   <FilePlus2 size={15} />
-                  {t('ساخت از این قالب', 'Create from template')}
+                  {t('بساز', 'Create')}
                 </button>
               </div>
             </article>

@@ -57,6 +57,7 @@ interface ReaderModalsProps {
   onSaveLink: (link: LinkInfo) => void
   onCloseLink: () => void
   chartOpen: boolean
+  chartInitial?: import('../../lib/types').ChartConfig | null
   onSaveChart: (config: import('../../lib/types').ChartConfig) => void
   onCloseChart: () => void
   shapeOpen: boolean
@@ -95,6 +96,7 @@ export function ReaderModals({
   onSaveLink,
   onCloseLink,
   chartOpen,
+  chartInitial,
   onSaveChart,
   onCloseChart,
   shapeOpen,
@@ -161,7 +163,12 @@ export function ReaderModals({
         onClose={onCloseLink}
       />
 
-      <ChartModal open={chartOpen} onSave={onSaveChart} onClose={onCloseChart} />
+      <ChartModal
+        open={chartOpen}
+        initial={chartInitial}
+        onSave={onSaveChart}
+        onClose={onCloseChart}
+      />
       <ShapeModal open={shapeOpen} onSave={onSaveShape} onClose={onCloseShape} />
       <GuideModal open={guideOpen} onSave={onSaveGuide} onClose={onCloseGuide} />
 

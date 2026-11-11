@@ -18,6 +18,11 @@ export function ChartView({ config, compact }: ChartViewProps) {
   const max = Math.max(1, ...values)
   const total = values.reduce((sum, value) => sum + value, 0) || 1
 
+  const background =
+    config.background && config.background !== 'transparent' ? (
+      <rect x="0" y="0" width="100" height="100" fill={config.background} />
+    ) : null
+
   if (config.kind === 'pie') {
     let angle = -Math.PI / 2
     const cx = 50
@@ -30,6 +35,7 @@ export function ChartView({ config, compact }: ChartViewProps) {
         role="img"
         aria-label={config.title || translate('نمودار دایره‌ای', 'Pie chart')}
       >
+        {background}
         {config.title && (
           <text x="50" y="9" textAnchor="middle" className="chart-title">
             {config.title}
@@ -98,6 +104,7 @@ export function ChartView({ config, compact }: ChartViewProps) {
         role="img"
         aria-label={config.title || translate('نمودار خطی', 'Line chart')}
       >
+        {background}
         {config.title && (
           <text x="50" y="9" textAnchor="middle" className="chart-title">
             {config.title}
@@ -135,6 +142,7 @@ export function ChartView({ config, compact }: ChartViewProps) {
       role="img"
       aria-label={config.title || translate('نمودار میله‌ای', 'Bar chart')}
     >
+      {background}
       {config.title && (
         <text x="50" y="9" textAnchor="middle" className="chart-title">
           {config.title}

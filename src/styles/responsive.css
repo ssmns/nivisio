@@ -16,23 +16,6 @@
   .library__inner {
     padding: 24px 22px 56px;
   }
-  .reader__panel {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    inset-inline-end: 0;
-    width: min(var(--panel-w), 92vw);
-    box-shadow: var(--shadow-lg);
-    border-inline-start: 1px solid var(--line);
-    z-index: 30;
-  }
-}
-
-@media (max-width: 1180px) and (min-width: 721px) {
-  .doc-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px 14px;
-  }
 }
 
 
@@ -165,6 +148,16 @@
     gap: 8px;
     min-height: 56px;
   }
+  .reader__panel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    inset-inline-end: 0;
+    width: min(var(--panel-w), 92vw);
+    box-shadow: var(--shadow-lg);
+    border-inline-start: 1px solid var(--line);
+    z-index: 30;
+  }
   .reader__title h1 {
     font-size: 13px;
   }
@@ -176,12 +169,25 @@
     padding: 0;
   }
   .tool-btn span,
-  .marker-widths button span {
+  .marker-widths .marker-width-label {
     display: none;
   }
   .marker-widths button {
-    width: 30px;
+    width: 34px;
     padding: 0;
+  }
+  .reader__toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .reader__toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  .reader__toolbar > * {
+    flex: none;
   }
   .tool-btn {
     width: 33px;
@@ -228,18 +234,26 @@
   .page-dock__progress {
     display: none;
   }
-  .toast-stack,
-  .import-toast {
-    inset-inline: 14px;
-    left: 14px;
-    right: 14px;
-    bottom: 112px;
+  .toast-stack {
+    inset-inline: auto;
+    left: auto;
+    right: 12px;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    width: min(310px, calc(100vw - 24px));
     max-width: none;
     transform: none;
     align-items: stretch;
   }
+  .toast {
+    width: 100%;
+  }
   .import-toast {
+    left: auto;
+    right: 12px;
+    width: min(310px, calc(100vw - 24px));
+    max-width: none;
     bottom: 14px;
+    transform: none;
   }
   .selection-popover {
     gap: 6px;
@@ -284,46 +298,5 @@
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-/* Tablet floating tool palette */
-@media (min-width: 721px) and (max-width: 1180px) {
-  .reader__toolbar--floating {
-    position: relative;
-    z-index: 25;
-    width: min(760px, calc(100vw - 24px));
-    max-width: calc(100vw - 24px);
-    margin: 8px auto 10px;
-    padding: 8px 10px 17px;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    background: var(--surface);
-    box-shadow: var(--shadow-md);
-  }
-  .reader__toolbar--floating .tool-btn {
-    height: 31px;
-  }
-  .reader__toolbar--floating .toolbar-resize {
-    position: absolute;
-    left: 50%;
-    bottom: 4px;
-    width: 54px;
-    height: 7px;
-    transform: translateX(-50%);
-    border-radius: 99px;
-    background: var(--line-strong);
-    cursor: ew-resize;
-    touch-action: none;
-  }
-  .reader__toolbar--floating .toolbar-resize::after {
-    content: '';
-    position: absolute;
-    inset: -5px -8px;
-  }
-  .reader__toolbar--compact .toolbar-snap,
-  .reader__toolbar--compact .toolbar-page,
-  .reader__toolbar--compact .category-select {
-    display: none;
   }
 }

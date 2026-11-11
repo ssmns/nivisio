@@ -8,11 +8,19 @@ import { useI18n } from '../lib/i18n'
 
 interface ChartModalProps {
   open: boolean
+  initial?: ChartConfig | null
   onSave: (config: ChartConfig) => void
   onClose: () => void
 }
 
 const COLORS = ['#f43f5e', '#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6', '#14b8a6']
+const BACKGROUNDS = [
+  { value: '#ffffff', name: 'White' },
+  { value: '#fff8fa', name: 'Paper' },
+  { value: '#fff1f2', name: 'Blush' },
+  { value: '#f8fafc', name: 'Mist' },
+  { value: 'transparent', name: 'Transparent' },
+]
 
 function parseList(value: string): string[] {
   return value
@@ -29,7 +37,7 @@ function parseNumber(value: string): number {
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
 }
 
-export function ChartModal({ open, onSave, onClose }: ChartModalProps) {
+export function ChartModal({ open, initial, onSave, onClose }: ChartModalProps) {
   const toast = useToast()
   const { lang, t } = useI18n()
   const [kind, setKind] = useState<ChartKind>('bar')
@@ -37,15 +45,29 @@ export function ChartModal({ open, onSave, onClose }: ChartModalProps) {
   const [labels, setLabels] = useState('')
   const [values, setValues] = useState('')
   const [color, setColor] = useState(COLORS[0])
+  const [background, setBackground] = useState('#ffffff')
 
   useEffect(() => {
     if (!open) return
-    setKind('bar')
-    setTitle('')
-    setLabels(lang === 'en' ? 'A, B, C, D' : 'الف، ب، ج، د')
-    setValues(lang === 'en' ? '4, 7, 3, 6' : '۴، ۷، ۳، ۶')
-    setColor(COLORS[0])
-  }, [lang, open])
+    setKind(initial?.kind ?? 'bar')
+    setTitle(initial?.title ?? '')
+    setLabels(
+      initial
+        ? initial.labels.join(lang === 'en' ? ', ' : '، ')
+        : lang === 'en'
+          ? 'A, B, C, D'
+          : 'الف، ب، ج، د',
+    )
+    setValues(
+      initial
+        ? initial.values.join(lang === 'en' ? ', ' : '، ')
+        : lang === 'en'
+          ? '4, 7, 3, 6'
+          : '۴، ۷، ۳، ۶',
+    )
+    setColor(initial?.color ?? COLORS[0])
+    setBackground(initial?.background ?? '#ffffff')
+  }, [initial, lang, open])
 
   const config = useMemo<ChartConfig>(() => {
     const parsedLabels = parseList(labels)
@@ -57,8 +79,9 @@ export function ChartModal({ open, onSave, onClose }: ChartModalProps) {
       labels: Array.from({ length: count }, (_, index) => parsedLabels[index] || `${index + 1}`),
       values: Array.from({ length: count }, (_, index) => parsedValues[index] ?? 0),
       color,
+      background,
     }
-  }, [kind, title, labels, values, color])
+  }, [kind, title, labels, values, color, background])
 
   const save = () => {
     if (config.values.length < 2) {
@@ -75,7 +98,7 @@ export function ChartModal({ open, onSave, onClose }: ChartModalProps) {
   return (
     <Modal
       open={open}
-      title={t('افزودن نمودار', 'Add chart')}
+      title={initial ? t('ویرایش نمودار', 'Edit chart') : t('افزودن نمودار', 'Add chart')}
       subtitle={t(
         'نمودار ساده برای یادداشت‌های مطالعاتی؛ بعد از ذخیره روی صفحه قرار می‌گیرد.',
         'A simple study chart; it is placed on the page after saving.',
@@ -88,7 +111,7 @@ export function ChartModal({ open, onSave, onClose }: ChartModalProps) {
             {t('انصراف', 'Cancel')}
           </button>
           <button type="button" className="btn btn--primary" onClick={save}>
-            {t('انتخاب و جای‌گذاری', 'Pick and place')}
+            {initial ? t('ذخیره تغییرات', 'Save changes') : t('انتخاب و جای‌گذاری', 'Pick and place')}
           </button>
         </>
       }
@@ -145,6 +168,29 @@ export function ChartModal({ open, onSave, onClose }: ChartModalProps) {
                   style={{ background: item }}
                   onClick={() => setColor(item)}
                   aria-label={t(`رنگ ${item}`, `Color ${item}`)}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="field">
+            <span>{t('پس‌زمینه نمودار', 'Chart background')}</span>
+            <div className="color-row">
+              {BACKGROUNDS.map((item) => (
+                <button
+                  key={item.value}
+                  type="button"
+                  className={`color-dot color-dot--sm${
+                    background === item.value ? ' is-active' : ''
+                  }${item.value === 'transparent' ? ' color-dot--transparent' : ''}`}
+                  style={{
+                    background:
+                      item.value === 'transparent'
+                        ? 'repeating-conic-gradient(#ddd 0 25%, #fff 0 50%)'
+                        : item.value,
+                  }}
+                  onClick={() => setBackground(item.value)}
+                  title={item.name}
+                  aria-label={item.name}
                 />
               ))}
             </div>

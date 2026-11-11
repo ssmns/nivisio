@@ -44,11 +44,28 @@ export function useReaderZoomGestures({
 
     let pinchStart = 0
     let pinchZoom = 1
+    let pinchMidX = 0
+    let pinchMidY = 0
+    let startScrollLeft = 0
+    let startScrollTop = 0
+
+    const midpoint = (touches: TouchList) => {
+      if (touches.length < 2) return { x: 0, y: 0 }
+      return {
+        x: (touches[0].clientX + touches[1].clientX) / 2,
+        y: (touches[0].clientY + touches[1].clientY) / 2,
+      }
+    }
 
     const onTouchStart = (event: TouchEvent) => {
       if (event.touches.length !== 2) return
       pinchStart = touchDistance(event.touches)
       pinchZoom = zoomRef.current
+      const mid = midpoint(event.touches)
+      pinchMidX = mid.x
+      pinchMidY = mid.y
+      startScrollLeft = stage.scrollLeft
+      startScrollTop = stage.scrollTop
       event.preventDefault()
     }
 
@@ -57,6 +74,10 @@ export function useReaderZoomGestures({
       event.preventDefault()
       const distance = touchDistance(event.touches)
       if (distance > 0) onZoom(clampZoom(pinchZoom * (distance / pinchStart)))
+      // Two-finger drag pans the page even while a drawing tool is active.
+      const mid = midpoint(event.touches)
+      stage.scrollLeft = startScrollLeft - (mid.x - pinchMidX)
+      stage.scrollTop = startScrollTop - (mid.y - pinchMidY)
     }
 
     const onTouchEnd = (event: TouchEvent) => {

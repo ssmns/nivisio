@@ -129,6 +129,8 @@ export interface ChartConfig {
   labels: string[]
   values: number[]
   color: string
+  /** Hex color or `transparent`. */
+  background?: string
 }
 
 export type LinkKind = 'external' | 'page' | 'document'

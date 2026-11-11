@@ -69,6 +69,7 @@ export interface PageViewProps {
   onAddTape: (rect: NormRect) => void
   onAddText: (point: NormPoint, pageAspect: number) => void
   onEditText: (annotation: Annotation, pageAspect: number) => void
+  onEditChart: (annotation: Annotation) => void
   onLassoSelect: (ids: string[]) => void
   onMoveSelected: (delta: NormPoint) => void
   onMoveAnnotation: (id: string, delta: NormPoint) => void
@@ -114,6 +115,7 @@ export function PdfPage({
   onAddTape,
   onAddText,
   onEditText,
+  onEditChart,
   onLassoSelect,
   onMoveSelected,
   onMoveAnnotation,
@@ -1031,6 +1033,7 @@ export function PdfPage({
             tapeGeometryFor={tapeGeometryFor}
             boxHandles={boxHandles}
             beginTapeTransform={beginTapeTransform}
+            onEditChart={onEditChart}
           />
 
           <TextAnnotations

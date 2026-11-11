@@ -462,7 +462,7 @@ export function AboutPage() {
       </main>
 
       <footer className="about__footer">
-        <span>{t('nivisio · نسخه ۱.۱.۱ · ساختهٔ جادو استودیو', 'nivisio · v1.1.1 · by Jadoo Studio')}</span>
+        <span>{t('nivisio · نسخه ۱.۱.۲ · ساختهٔ جادو استودیو', 'nivisio · v1.1.2 · by Jadoo Studio')}</span>
         <span>
           <Search size={13} /> {t('ساخته‌شده با React، PDF.js، Dexie و Capacitor', 'Built with React, PDF.js, Dexie and Capacitor')}
         </span>

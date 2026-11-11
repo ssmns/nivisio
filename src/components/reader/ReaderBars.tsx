@@ -6,6 +6,7 @@ import {
   Lasso,
   RotateCcw,
   RotateCw,
+  Pencil,
   Ruler,
   Shapes,
   Trash2,
@@ -21,6 +22,7 @@ interface ReaderBarsProps {
   activeObject: Annotation | null
   selectedAnnotations: Annotation[]
   onRotateObject: (delta: number) => void
+  onEditObject: (annotation: Annotation) => void
   onDeleteObject: (annotation: Annotation) => void
   onCloseObject: () => void
   onRecolorSelected: (color: string) => void
@@ -42,6 +44,7 @@ export function ReaderBars({
   activeObject,
   selectedAnnotations,
   onRotateObject,
+  onEditObject,
   onDeleteObject,
   onCloseObject,
   onRecolorSelected,
@@ -61,6 +64,12 @@ export function ReaderBars({
             <Icon size={15} />
             {annotationLabel(activeObject)}
           </span>
+          {activeObject.type === 'chart' && (
+            <button type="button" onClick={() => onEditObject(activeObject)}>
+              <Pencil size={14} />
+              {t('ویرایش', 'Edit')}
+            </button>
+          )}
           {canRotate && (
             <>
               <button

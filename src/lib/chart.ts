@@ -21,11 +21,13 @@ export function drawChartOnCanvas(
   const max = Math.max(1, ...values)
 
   ctx.save()
-  ctx.fillStyle = '#ffffff'
-  ctx.fillRect(x, y, width, height)
-  ctx.strokeStyle = '#e3e1d9'
-  ctx.lineWidth = Math.max(1, width * 0.002)
-  ctx.strokeRect(x, y, width, height)
+  if (config.background !== 'transparent') {
+    ctx.fillStyle = config.background || '#ffffff'
+    ctx.fillRect(x, y, width, height)
+    ctx.strokeStyle = '#e3e1d9'
+    ctx.lineWidth = Math.max(1, width * 0.002)
+    ctx.strokeRect(x, y, width, height)
+  }
 
   const titleSize = Math.max(11, width * 0.035)
   ctx.fillStyle = '#262736'

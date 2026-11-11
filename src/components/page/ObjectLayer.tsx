@@ -24,6 +24,7 @@ interface ObjectLayerProps {
     event: ReactPointerEvent<HTMLDivElement>,
     annotation: Annotation,
   ) => void
+  onEditChart: (annotation: Annotation) => void
 }
 
 export function ObjectLayer({
@@ -36,6 +37,7 @@ export function ObjectLayer({
   tapeGeometryFor,
   boxHandles,
   beginTapeTransform,
+  onEditChart,
 }: ObjectLayerProps) {
   const images = annotations.filter((annotation) => annotation.type === 'image')
   const charts = annotations.filter((annotation) => annotation.type === 'chart')
@@ -94,9 +96,19 @@ export function ObjectLayer({
                   pointerEvents: tool === 'select' ? 'auto' : 'none',
                   cursor: tool === 'select' ? 'move' : undefined,
                   zIndex: isActive ? 8 : undefined,
+                  background:
+                    annotation.chart?.background === 'transparent'
+                      ? 'transparent'
+                      : annotation.chart?.background ?? '#ffffff',
+                  boxShadow:
+                    annotation.chart?.background === 'transparent' ? 'none' : undefined,
                   ...moveStyle(annotation),
                 }}
                 onPointerDown={(event) => beginTapeTransform(event, annotation)}
+                onDoubleClick={(event) => {
+                  event.stopPropagation()
+                  onEditChart(annotation)
+                }}
               >
                 <ChartView config={annotation.chart} compact />
                 {boxHandles(isActive)}

@@ -2,6 +2,24 @@
 
 All notable changes to nivisio are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.2] — 2026-11-12
+
+### Fixed
+
+- Highlighter stroke-width icons are visible on mobile.
+- Mobile defaults to icon-only buttons; the label preference is stored per device class.
+- The mobile toolbar stays on one row and scrolls horizontally instead of wrapping.
+- Two-finger drag pans the page and two-finger pinch zooms.
+- Toasts are shorter and sit in the bottom-right corner on mobile instead of covering the width.
+- Note templates show four cards per row on mobile.
+- Charts can be edited after placement (title, labels, values, color, background).
+- Chart backgrounds support presets and a transparent option.
+- Chart selection handles are no longer clipped by the chart box.
+- The Insert menu is anchored inside the mobile viewport.
+- Removed tablet-only features: floating/resizable toolbar, tablet 3-card library rule and tablet-only About layout. The app now targets mobile and desktop layouts.
+
+---
+
 ## [1.1.1] — 2026-11-12
 
 ### Fixed

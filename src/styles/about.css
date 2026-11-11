@@ -564,12 +564,6 @@
   color: var(--ink-soft);
 }
 
-@media (max-width: 1180px) {
-  .about-features {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 @media (max-width: 1000px) {
   .about-hero {
     grid-template-columns: 1fr;

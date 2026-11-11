@@ -19,9 +19,13 @@ export function useReaderPreferences() {
   const [showText, setShowText] = useState(
     () => localStorage.getItem('bnote-show-text') !== '0',
   )
-  const [showLabels, setShowLabels] = useState(
-    () => localStorage.getItem('bnote-show-labels') !== '0',
-  )
+  const [showLabels, setShowLabels] = useState(() => {
+    const mobile =
+      typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches
+    const key = mobile ? 'bnote-show-labels-mobile' : 'bnote-show-labels'
+    const stored = localStorage.getItem(key)
+    return stored === null ? !mobile : stored !== '0'
+  })
 
   useEffect(() => {
     localStorage.setItem('bnote-view-mode', viewMode)
@@ -29,7 +33,12 @@ export function useReaderPreferences() {
     localStorage.setItem('bnote-reading-theme', readingTheme)
     localStorage.setItem('bnote-snap', snapEnabled ? '1' : '0')
     localStorage.setItem('bnote-show-text', showText ? '1' : '0')
-    localStorage.setItem('bnote-show-labels', showLabels ? '1' : '0')
+    const mobile =
+      typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches
+    localStorage.setItem(
+      mobile ? 'bnote-show-labels-mobile' : 'bnote-show-labels',
+      showLabels ? '1' : '0',
+    )
   }, [viewMode, fitMode, readingTheme, snapEnabled, showText, showLabels])
 
   return {

@@ -754,7 +754,7 @@
 
 /* Button label preference: text+icon or icon-only */
 .reader--icons .reader__toolbar .tool-btn span,
-.reader--icons .reader__toolbar .marker-widths button span,
+.reader--icons .reader__toolbar .marker-widths .marker-width-label,
 .reader--icons .reader__toolbar .category-select > span,
 .reader--icons .page-dock .view-menu__trigger span {
   display: none;
