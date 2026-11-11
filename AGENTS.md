@@ -95,9 +95,12 @@ gitignored; public contributors use the default npm registry from `.npmrc.exampl
   (0 for notebook pages), `category`, `color`, optional `sortIndex` and `type`
   (`highlight | ink | note | image | chart | link | tape | text | shape | guide`).
 - Shapes store `shape: {kind, sides, filled, strokeWidth, flipX, flipY}` in a
-  normalized rect. Guides store `guide: {kind: ruler|protractor|triangle}` and are
-  excluded from PDF export. Box objects (tape/image/chart/shape/guide) share the
-  same move/resize/rotate transform and handles.
+  normalized rect. Lines, arrows and curved arrows also store their two endpoints in
+  the rect-local `start`/`end` (0..1) plus an optional `bend` for `curve-arrow`, so
+  both endpoints stay draggable after creation. Guides store
+  `guide: {kind: ruler|protractor|triangle}` and are excluded from PDF export.
+  Box objects (tape/image/chart/shape/guide) share the same move/resize/rotate transform
+  and handles.
 - Deleting a document must remove files, notebook pages and annotations in one
   transaction (`deleteDocumentCascade`). Deleting a notebook page removes its
   annotations (`deleteNotebookPageCascade`).
@@ -182,8 +185,13 @@ Rules:
   and Templates pages scroll internally. The top bar and toolbars stay put.
 - In continuous mode the active page is detected from the stage scroll position and highlighted
   with `.page-slot.is-current`; the page dock and header follow it.
-- Tools on both PDF and notebooks: pen, pencil, highlighter, tape, eraser, lasso,
-  Persian/English text, image. Sticky note/chart/link are under the insert menu.
+- Tools on both PDF and notebooks: select, pan, pen, pencil, highlighter, tape, eraser,
+  lasso, Persian/English text, image. Sticky note/chart/link are under the insert menu.
+- Zoom: pinch is anchored to the point between the fingers; two-finger drag pans while a
+  drawing tool is active; double-tap zooms in/out in select and pan modes. The pan tool
+  drags the stage on touch and mouse. Page slots must not use paint containment
+  (`content-visibility: auto`) or the horizontal overflow of a zoomed page stops being
+  scrollable in RTL.
 - Text annotations use `dir="auto"`, `unicode-bidi: plaintext` and Vazirmatn so
   Persian and mixed-direction strings render correctly.
 

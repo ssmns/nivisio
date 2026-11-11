@@ -13,6 +13,7 @@ import type {
   PenStyle,
 } from './types'
 import { blobToBase64, pressureWidth, strokeDash } from './utils'
+import { drawShapeAnnotation } from './exportShape'
 import { wrapText } from './wrapText'
 
 const RENDER_WIDTH = 1100
@@ -337,74 +338,7 @@ async function drawAnnotation(
   if (annotation.type === 'shape' && annotation.shape) {
     const rect = annotation.rects?.[0]
     if (!rect) return
-    const r = rectPx(rect)
-    const config = annotation.shape
-    const angle = ((annotation.rotation ?? 0) * Math.PI) / 180
-    const lineWidth = Math.max(1, width * 0.003 * (config.strokeWidth ?? 1))
-    ctx.save()
-    ctx.translate(r.x + r.w / 2, r.y + r.h / 2)
-    ctx.rotate(angle)
-    ctx.strokeStyle = annotation.color
-    ctx.fillStyle = annotation.color
-    ctx.lineWidth = lineWidth
-    ctx.lineCap = 'round'
-    ctx.lineJoin = 'round'
-    const x1 = (-r.w / 2) * (config.flipX ? -1 : 1)
-    const y1 = (-r.h / 2) * (config.flipY ? -1 : 1)
-    const x2 = (r.w / 2) * (config.flipX ? -1 : 1)
-    const y2 = (r.h / 2) * (config.flipY ? -1 : 1)
-    if (config.kind === 'line' || config.kind === 'arrow') {
-      ctx.beginPath()
-      ctx.moveTo(x1, y1)
-      ctx.lineTo(x2, y2)
-      ctx.stroke()
-      if (config.kind === 'arrow') {
-        const head = Math.max(6, lineWidth * 5)
-        const a = Math.atan2(y2 - y1, x2 - x1)
-        ctx.beginPath()
-        ctx.moveTo(x2, y2)
-        ctx.lineTo(x2 - Math.cos(a - 0.4) * head, y2 - Math.sin(a - 0.4) * head)
-        ctx.lineTo(x2 - Math.cos(a + 0.4) * head, y2 - Math.sin(a + 0.4) * head)
-        ctx.closePath()
-        ctx.fill()
-      }
-    } else if (config.kind === 'rect') {
-      if (config.filled) {
-        ctx.globalAlpha = 0.18
-        ctx.fillRect(-r.w / 2, -r.h / 2, r.w, r.h)
-        ctx.globalAlpha = 1
-      }
-      ctx.strokeRect(-r.w / 2, -r.h / 2, r.w, r.h)
-    } else if (config.kind === 'ellipse' || config.kind === 'circle') {
-      ctx.beginPath()
-      ctx.ellipse(0, 0, r.w / 2, r.h / 2, 0, 0, Math.PI * 2)
-      if (config.filled) {
-        ctx.globalAlpha = 0.18
-        ctx.fill()
-        ctx.globalAlpha = 1
-      }
-      ctx.stroke()
-    } else {
-      const count = Math.max(3, Math.min(24, config.sides ?? 5))
-      const outer = Math.min(r.w, r.h) / 2
-      const points: [number, number][] = []
-      const total = config.kind === 'star' ? count * 2 : count
-      for (let i = 0; i < total; i += 1) {
-        const radius = config.kind === 'star' && i % 2 === 1 ? outer * 0.45 : outer
-        const a = -Math.PI / 2 + (i * Math.PI * 2) / total
-        points.push([Math.cos(a) * radius, Math.sin(a) * radius])
-      }
-      ctx.beginPath()
-      points.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)))
-      ctx.closePath()
-      if (config.filled) {
-        ctx.globalAlpha = 0.18
-        ctx.fill()
-        ctx.globalAlpha = 1
-      }
-      ctx.stroke()
-    }
-    ctx.restore()
+    drawShapeAnnotation(ctx, annotation, width, rectPx(rect))
     return
   }
 

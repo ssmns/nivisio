@@ -1,0 +1,116 @@
+/* ---------- shapes, line endpoints and page panning ---------- */
+
+.shape-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.shape-picker button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 58px;
+  padding: 6px 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 9.5px;
+  line-height: 1.2;
+}
+
+.shape-picker button.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.shape-picker__icon {
+  width: 28px;
+  height: 22px;
+  flex: none;
+}
+
+.pdf-page {
+  touch-action: pan-x pan-y;
+}
+
+.pdf-interaction--pan {
+  cursor: grab;
+  touch-action: none;
+}
+
+.pdf-interaction--pan:active {
+  cursor: grabbing;
+}
+
+.shape-box > svg {
+  display: block;
+}
+
+.shape-box--line::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 8px;
+}
+
+.shape-endpoint {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(20, 20, 30, 0.28);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: crosshair;
+  z-index: 11;
+}
+
+.shape-endpoint::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+}
+
+.shape-bend-handle {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border: 2px dashed var(--accent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 18%, #fff);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: move;
+  z-index: 11;
+}
+
+.shape-bend-handle::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+}
+
+@media (pointer: coarse) {
+  .shape-endpoint {
+    width: 22px;
+    height: 22px;
+  }
+
+  .shape-bend-handle {
+    width: 20px;
+    height: 20px;
+  }
+}

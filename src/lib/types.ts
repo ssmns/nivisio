@@ -121,7 +121,7 @@ export interface NormPoint {
   y: number
 }
 
-export type ChartKind = 'bar' | 'line' | 'pie'
+export type ChartKind = 'bar' | 'line' | 'area' | 'pie' | 'radar'
 
 export interface ChartConfig {
   kind: ChartKind
@@ -138,6 +138,8 @@ export type LinkKind = 'external' | 'page' | 'document'
 export type ShapeKind =
   | 'line'
   | 'arrow'
+  | 'curve-arrow'
+  | 'bezier-arrow'
   | 'rect'
   | 'ellipse'
   | 'circle'
@@ -152,6 +154,14 @@ export interface ShapeConfig {
   strokeWidth?: number
   flipX?: boolean
   flipY?: boolean
+  /** Line-like shapes: start/end in the shape rect's local 0..1 space. */
+  start?: NormPoint
+  end?: NormPoint
+  /** Curved arrow bend as a fraction of the chord length. */
+  bend?: number
+  /** Cubic Bézier control offsets (fractions of the chord) for `bezier-arrow`. */
+  bend1?: number
+  bend2?: number
 }
 
 export type GuideKind = 'ruler' | 'protractor' | 'triangle'
@@ -206,6 +216,7 @@ export interface Annotation {
 
 export type ReaderTool =
   | 'select'
+  | 'pan'
   | 'highlight'
   | 'marker'
   | 'pen'
@@ -301,6 +312,8 @@ export const GRID_TYPES: {
 export const SHAPE_KINDS: { id: ShapeKind; name: string; nameEn: string }[] = [
   { id: 'line', name: 'خط مستقیم', nameEn: 'Line' },
   { id: 'arrow', name: 'فلش', nameEn: 'Arrow' },
+  { id: 'curve-arrow', name: 'فلش منحنی', nameEn: 'Curved arrow' },
+  { id: 'bezier-arrow', name: 'فلش بزیه', nameEn: 'Bézier arrow' },
   { id: 'rect', name: 'مستطیل', nameEn: 'Rectangle' },
   { id: 'ellipse', name: 'بیضی', nameEn: 'Ellipse' },
   { id: 'circle', name: 'دایره', nameEn: 'Circle' },

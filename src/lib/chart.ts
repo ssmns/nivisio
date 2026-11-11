@@ -82,6 +82,62 @@ export function drawChartOnCanvas(
     return
   }
 
+  if (config.kind === 'radar') {
+    const cx = x + width / 2
+    const cy = top + plotHeight / 2 + height * 0.02
+    const radius = Math.min(width, height) * 0.26
+    const count = Math.max(3, values.length)
+    const series = Array.from({ length: count }, (_, index) => values[index] ?? 0)
+    const angleAt = (index: number) => -Math.PI / 2 + (index * Math.PI * 2) / count
+    const pointAt = (index: number, ratio: number) => ({
+      x: cx + Math.cos(angleAt(index)) * radius * ratio,
+      y: cy + Math.sin(angleAt(index)) * radius * ratio,
+    })
+    ctx.strokeStyle = '#e2e4ec'
+    ctx.lineWidth = Math.max(1, width * 0.0012)
+    ;[0.33, 0.66, 1].forEach((ratio) => {
+      ctx.beginPath()
+      for (let i = 0; i < count; i += 1) {
+        const point = pointAt(i, ratio)
+        if (i === 0) ctx.moveTo(point.x, point.y)
+        else ctx.lineTo(point.x, point.y)
+      }
+      ctx.closePath()
+      ctx.stroke()
+    })
+    for (let i = 0; i < count; i += 1) {
+      const point = pointAt(i, 1)
+      ctx.beginPath()
+      ctx.moveTo(cx, cy)
+      ctx.lineTo(point.x, point.y)
+      ctx.stroke()
+    }
+    ctx.beginPath()
+    series.forEach((value, index) => {
+      const point = pointAt(index, Math.max(0.03, value / max))
+      if (index === 0) ctx.moveTo(point.x, point.y)
+      else ctx.lineTo(point.x, point.y)
+    })
+    ctx.closePath()
+    ctx.fillStyle = config.color || COLORS[0]
+    ctx.globalAlpha = 0.2
+    ctx.fill()
+    ctx.globalAlpha = 1
+    ctx.strokeStyle = config.color || COLORS[0]
+    ctx.lineWidth = Math.max(1.5, width * 0.004)
+    ctx.stroke()
+    const labelSize = Math.max(8, width * 0.02)
+    ctx.font = `400 ${labelSize}px Vazirmatn, Tahoma, sans-serif`
+    series.forEach((_value, index) => {
+      const point = pointAt(index, 1.16)
+      ctx.textAlign = Math.abs(point.x - cx) < 4 ? 'center' : point.x > cx ? 'left' : 'right'
+      ctx.fillStyle = '#4a4b5c'
+      ctx.fillText(labels[index] ?? '', point.x, point.y + labelSize * 0.35)
+    })
+    ctx.restore()
+    return
+  }
+
   ctx.strokeStyle = '#c9ccd8'
   ctx.lineWidth = Math.max(1, width * 0.0015)
   ctx.beginPath()
@@ -94,7 +150,23 @@ export function drawChartOnCanvas(
   ctx.font = `400 ${labelSize}px Vazirmatn, Tahoma, sans-serif`
   ctx.textAlign = 'center'
 
-  if (config.kind === 'line') {
+  if (config.kind === 'line' || config.kind === 'area') {
+    if (config.kind === 'area') {
+      ctx.beginPath()
+      values.forEach((value, index) => {
+        const px = left + (index / Math.max(1, values.length - 1)) * plotWidth
+        const py = baseY - (value / max) * plotHeight
+        if (index === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      })
+      ctx.lineTo(left + plotWidth, baseY)
+      ctx.lineTo(left, baseY)
+      ctx.closePath()
+      ctx.fillStyle = config.color || COLORS[0]
+      ctx.globalAlpha = 0.2
+      ctx.fill()
+      ctx.globalAlpha = 1
+    }
     ctx.beginPath()
     values.forEach((value, index) => {
       const px = left + (index / Math.max(1, values.length - 1)) * plotWidth

@@ -23,7 +23,16 @@
 
 ---
 
+> **Repository:** [github.com/ssmns/nivisio](https://github.com/ssmns/nivisio)
+>
 > [Full Persian feature list and changelog](./CHANGELOG.fa.md)
+
+## The name
+
+**NIVISIO** (نیویسیو, also read **Niviso**) comes from the ancient Persian root
+*niwīstan* / *niwīsidan* (نیویسدن، نبشتن; Middle Persian: *niwīstan*), meaning **to
+write and inscribe**. The name describes a note-taking and document tool while
+matching the modern Android app identity and logo.
 
 ## Features
 
@@ -31,13 +40,16 @@
 - Personal PDF library with study collections, tags, favorites, covers and independent display titles.
 - Resume exactly where you left off with logical-page progress, read/unread marks and bookmarks.
 - Single-page, two-page and continuous views with fit-width/fit-height and normal/dim/night PDF themes.
+- Anchored pinch/double-tap zoom and horizontal panning on touch, plus a dedicated pan tool.
 - Bilingual UI (Persian/RTL and English/LTR) with locale-aware digits, dates and labels.
 
 ### Annotation and drawing
 - Pen, pencil, soft brush, fountain pen, dashed pen and marker with stylus pressure.
 - Text highlighting, freehand highlighter, tape, eraser and lasso.
 - Movable, resizable and rotatable text, images (transparent PNG/WebP), charts, tape and shapes.
-- Shapes: line, arrow, rectangle, ellipse, circle, triangle, polygon and star with custom point count.
+- Shapes: line, arrow, curved arrow, Bézier arrow, rectangle, ellipse, circle, triangle, polygon and star with custom point count; every kind has an icon in the picker.
+- Lines and arrows are defined by two draggable endpoints; curved and Bézier arrows also expose bend handles.
+- Charts: bar, line, area, pie and radar with editable labels, values, colors and backgrounds.
 - Measuring guides: ruler, set square and protractor, with guide-edge snapping.
 - Grid-aware snapping: ruled, grid, dotted, graph, isometric, true 30–60 and circular paper.
 - Straight lines with 15° angle snapping.

@@ -1,6 +1,15 @@
 import type { CSSProperties, ReactNode, PointerEvent as ReactPointerEvent } from 'react'
-import type { Annotation, ReaderTool } from '../../lib/types'
+import type { Annotation, ReaderTool, ShapeConfig } from '../../lib/types'
 import { polygonPoints, starPoints } from '../../lib/utils'
+import {
+  bezierControls,
+  curveControlPoint,
+  curveMidpoint,
+  isLineShape,
+  shapeEndpoints,
+} from '../../lib/shapes'
+import type { ShapePreview } from '../../hooks/useShapeEndpoints'
+import { translate } from '../../lib/lang'
 import { GuideView } from './GuideView'
 
 interface BoxGeometry {
@@ -25,6 +34,18 @@ interface ShapeGuideLayerProps {
   ) => void
   pageSize: { width: number; height: number }
   pagePoints: { width: number; height: number }
+  shapePreview?: ShapePreview | null
+}
+
+/** Scale the 0..100 points from utils to the real pixel box. */
+function scalePoints(points: string, width: number, height: number): string {
+  return points
+    .split(' ')
+    .map((pair) => {
+      const [x, y] = pair.split(',').map(Number)
+      return `${(x / 100) * width},${(y / 100) * height}`
+    })
+    .join(' ')
 }
 
 export function ShapeGuideLayer({
@@ -38,129 +59,267 @@ export function ShapeGuideLayer({
   beginTapeTransform,
   pageSize,
   pagePoints,
+  shapePreview,
 }: ShapeGuideLayerProps) {
   const guides = annotations.filter((annotation) => annotation.type === 'guide')
   const shapes = annotations.filter((annotation) => annotation.type === 'shape')
+
+  const geometryFor = (annotation: Annotation): BoxGeometry => {
+    if (shapePreview?.id === annotation.id) {
+      return { ...shapePreview.rect, rotation: shapePreview.rotation }
+    }
+    return tapeGeometryFor(annotation)
+  }
+
+  const configFor = (annotation: Annotation): ShapeConfig => {
+    if (shapePreview?.id === annotation.id) return shapePreview.shape
+    return annotation.shape ?? { kind: 'line' }
+  }
+
   return (
     <>
-          {guides.map((annotation) => {
-            const geometry = tapeGeometryFor(annotation)
-            const isActive = tool === 'select' && activeObjectId === annotation.id
-            const kind = annotation.guide?.kind ?? 'ruler'
-            return (
-              <div
-                key={annotation.id}
-                className={`object-box guide-box${selectedClass(annotation)}${
-                  isActive ? ' is-object-selected' : ''
-                }`}
-                style={{
-                  left: `${geometry.x * 100}%`,
-                  top: `${geometry.y * 100}%`,
-                  width: `${geometry.w * 100}%`,
-                  height: `${geometry.h * 100}%`,
-                  transform: `rotate(${geometry.rotation}deg)`,
-                  pointerEvents: tool === 'select' ? 'auto' : 'none',
-                  cursor: tool === 'select' ? 'move' : undefined,
-                  zIndex: isActive ? 9 : 3,
-                  ...moveStyle(annotation),
-                }}
-                onPointerDown={(event) => beginTapeTransform(event, annotation)}
-              >
-                <GuideView
-                  kind={kind}
-                  width={geometry.w * pageSize.width}
-                  height={geometry.h * pageSize.height}
-                  pageWidthPt={pagePoints.width}
-                  pageWidthPx={pageSize.width}
+      {guides.map((annotation) => {
+        const geometry = tapeGeometryFor(annotation)
+        const isActive = tool === 'select' && activeObjectId === annotation.id
+        const kind = annotation.guide?.kind ?? 'ruler'
+        return (
+          <div
+            key={annotation.id}
+            className={`object-box guide-box${selectedClass(annotation)}${
+              isActive ? ' is-object-selected' : ''
+            }`}
+            style={{
+              left: `${geometry.x * 100}%`,
+              top: `${geometry.y * 100}%`,
+              width: `${geometry.w * 100}%`,
+              height: `${geometry.h * 100}%`,
+              transform: `rotate(${geometry.rotation}deg)`,
+              pointerEvents: tool === 'select' ? 'auto' : 'none',
+              cursor: tool === 'select' ? 'move' : undefined,
+              zIndex: isActive ? 9 : 3,
+              ...moveStyle(annotation),
+            }}
+            onPointerDown={(event) => beginTapeTransform(event, annotation)}
+          >
+            <GuideView
+              kind={kind}
+              width={geometry.w * pageSize.width}
+              height={geometry.h * pageSize.height}
+              pageWidthPt={pagePoints.width}
+              pageWidthPx={pageSize.width}
+            />
+            {boxHandles(isActive)}
+          </div>
+        )
+      })}
+
+      {shapes.map((annotation) => {
+        const geometry = geometryFor(annotation)
+        const isActive = tool === 'select' && activeObjectId === annotation.id
+        const config = configFor(annotation)
+        const color = annotation.color
+        const filled = Boolean(config.filled)
+        const lineLike = isLineShape(config.kind)
+        const stroke = Math.max(1.2, pageSize.width * 0.0026 * (config.strokeWidth ?? 1))
+        const width = Math.max(1, geometry.w * pageSize.width)
+        const height = Math.max(1, geometry.h * pageSize.height)
+        const markerId = `arrow-${annotation.id}`
+        const head = Math.max(7, stroke * 4.6)
+        const endpoints = shapeEndpoints(config)
+        const p1 = { x: endpoints.start.x * width, y: endpoints.start.y * height }
+        const p2 = { x: endpoints.end.x * width, y: endpoints.end.y * height }
+        const control =
+          config.kind === 'curve-arrow'
+            ? curveControlPoint(p1, p2, config.bend ?? 0.35)
+            : null
+        const mid = control ? curveMidpoint(p1, p2, control) : null
+        const bezier =
+          config.kind === 'bezier-arrow'
+            ? bezierControls(p1, p2, config.bend1 ?? 0.35, config.bend2 ?? 0.35)
+            : null
+        const inset = stroke / 2 + 1
+        return (
+          <div
+            key={annotation.id}
+            className={`object-box shape-box${lineLike ? ' shape-box--line' : ''}${selectedClass(annotation)}${
+              isActive ? ' is-object-selected' : ''
+            }`}
+            style={{
+              left: `${geometry.x * 100}%`,
+              top: `${geometry.y * 100}%`,
+              width: `${geometry.w * 100}%`,
+              height: `${geometry.h * 100}%`,
+              transform: `rotate(${geometry.rotation}deg)`,
+              pointerEvents: tool === 'select' ? 'auto' : 'none',
+              cursor: tool === 'select' ? 'move' : undefined,
+              zIndex: isActive ? 8 : undefined,
+              color,
+              ...moveStyle(annotation),
+            }}
+            onPointerDown={(event) => beginTapeTransform(event, annotation)}
+          >
+            <svg
+              viewBox={`0 0 ${width} ${height}`}
+              width="100%"
+              height="100%"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <marker
+                  id={markerId}
+                  markerUnits="userSpaceOnUse"
+                  markerWidth={head}
+                  markerHeight={head}
+                  refX={head}
+                  refY={head / 2}
+                  orient="auto"
+                >
+                  <path
+                    d={`M0,0 L${head},${head / 2} L0,${head} Z`}
+                    fill={color}
+                    stroke="none"
+                  />
+                </marker>
+              </defs>
+              {(config.kind === 'line' || config.kind === 'arrow') && (
+                <line
+                  x1={p1.x}
+                  y1={p1.y}
+                  x2={p2.x}
+                  y2={p2.y}
+                  stroke={color}
+                  strokeWidth={stroke}
+                  strokeLinecap="round"
+                  markerEnd={config.kind === 'arrow' ? `url(#${markerId})` : undefined}
                 />
-                {boxHandles(isActive)}
-              </div>
-            )
-          })}
+              )}
+              {config.kind === 'curve-arrow' && control && (
+                <path
+                  d={`M ${p1.x} ${p1.y} Q ${control.x} ${control.y} ${p2.x} ${p2.y}`}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={stroke}
+                  strokeLinecap="round"
+                  markerEnd={`url(#${markerId})`}
+                />
+              )}
+              {config.kind === 'bezier-arrow' && bezier && (
+                <path
+                  d={`M ${p1.x} ${p1.y} C ${bezier.c1.x} ${bezier.c1.y} ${bezier.c2.x} ${bezier.c2.y} ${p2.x} ${p2.y}`}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={stroke}
+                  strokeLinecap="round"
+                  markerEnd={`url(#${markerId})`}
+                />
+              )}
+              {config.kind === 'rect' && (
+                <rect
+                  x={inset}
+                  y={inset}
+                  width={Math.max(0, width - inset * 2)}
+                  height={Math.max(0, height - inset * 2)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                />
+              )}
+              {(config.kind === 'ellipse' || config.kind === 'circle') && (
+                <ellipse
+                  cx={width / 2}
+                  cy={height / 2}
+                  rx={Math.max(0, width / 2 - inset)}
+                  ry={Math.max(0, height / 2 - inset)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                />
+              )}
+              {config.kind === 'triangle' && (
+                <polygon
+                  points={scalePoints('50,4 96,96 4,96', width, height)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                />
+              )}
+              {config.kind === 'polygon' && (
+                <polygon
+                  points={scalePoints(polygonPoints(config.sides ?? 5), width, height)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                />
+              )}
+              {config.kind === 'star' && (
+                <polygon
+                  points={scalePoints(starPoints(config.sides ?? 5), width, height)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                />
+              )}
+            </svg>
 
-          {shapes.map((annotation) => {
-            const geometry = tapeGeometryFor(annotation)
-            const isActive = tool === 'select' && activeObjectId === annotation.id
-            const config = annotation.shape ?? { kind: 'line' as const }
-            const color = annotation.color
-            const filled = config.filled
-            const sw = (config.strokeWidth ?? 1) * 1.4
-            const markerId = `arrow-${annotation.id}`
-            const x1 = config.flipX ? 100 : 0
-            const y1 = config.flipY ? 100 : 0
-            const x2 = config.flipX ? 0 : 100
-            const y2 = config.flipY ? 0 : 100
-            return (
-              <div
-                key={annotation.id}
-                className={`object-box shape-box${selectedClass(annotation)}${
-                  isActive ? ' is-object-selected' : ''
-                }`}
-                style={{
-                  left: `${geometry.x * 100}%`,
-                  top: `${geometry.y * 100}%`,
-                  width: `${geometry.w * 100}%`,
-                  height: `${geometry.h * 100}%`,
-                  transform: `rotate(${geometry.rotation}deg)`,
-                  pointerEvents: tool === 'select' ? 'auto' : 'none',
-                  cursor: tool === 'select' ? 'move' : undefined,
-                  zIndex: isActive ? 8 : undefined,
-                  color,
-                  ...moveStyle(annotation),
-                }}
-                onPointerDown={(event) => beginTapeTransform(event, annotation)}
-              >
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <defs>
-                    <marker id={markerId} markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
-                      <path d="M0,0 L6,3 L0,6 Z" fill={color} />
-                    </marker>
-                  </defs>
-                  {(config.kind === 'line' || config.kind === 'arrow') && (
-                    <line
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
-                      stroke={color}
-                      strokeWidth={sw}
-                      strokeLinecap="round"
-                      markerEnd={config.kind === 'arrow' ? `url(#${markerId})` : undefined}
+            {lineLike && isActive ? (
+              <>
+                <span
+                  className="shape-endpoint"
+                  data-shape-handle="start"
+                  style={{ left: `${endpoints.start.x * 100}%`, top: `${endpoints.start.y * 100}%` }}
+                />
+                <span
+                  className="shape-endpoint"
+                  data-shape-handle="end"
+                  style={{ left: `${endpoints.end.x * 100}%`, top: `${endpoints.end.y * 100}%` }}
+                />
+                {config.kind === 'curve-arrow' && mid && (
+                  <span
+                    className="shape-bend-handle"
+                    data-shape-handle="bend"
+                    style={{
+                      left: `${(mid.x / width) * 100}%`,
+                      top: `${(mid.y / height) * 100}%`,
+                    }}
+                  />
+                )}
+                {config.kind === 'bezier-arrow' && bezier && (
+                  <>
+                    <span
+                      className="shape-bend-handle"
+                      data-shape-handle="bend1"
+                      style={{
+                        left: `${(bezier.c1.x / width) * 100}%`,
+                        top: `${(bezier.c1.y / height) * 100}%`,
+                      }}
                     />
-                  )}
-                  {config.kind === 'rect' && (
-                    <rect x="2" y="2" width="96" height="96" fill={filled ? color : 'none'} fillOpacity={filled ? 0.18 : 0} stroke={color} strokeWidth={sw} />
-                  )}
-                  {(config.kind === 'ellipse' || config.kind === 'circle') && (
-                    <ellipse cx="50" cy="50" rx="48" ry="48" fill={filled ? color : 'none'} fillOpacity={filled ? 0.18 : 0} stroke={color} strokeWidth={sw} />
-                  )}
-                  {config.kind === 'triangle' && (
-                    <polygon points="50,4 96,96 4,96" fill={filled ? color : 'none'} fillOpacity={filled ? 0.18 : 0} stroke={color} strokeWidth={sw} />
-                  )}
-                  {config.kind === 'polygon' && (
-                    <polygon
-                      points={polygonPoints(config.sides ?? 5)}
-                      fill={filled ? color : 'none'}
-                      fillOpacity={filled ? 0.18 : 0}
-                      stroke={color}
-                      strokeWidth={sw}
+                    <span
+                      className="shape-bend-handle"
+                      data-shape-handle="bend2"
+                      style={{
+                        left: `${(bezier.c2.x / width) * 100}%`,
+                        top: `${(bezier.c2.y / height) * 100}%`,
+                      }}
                     />
-                  )}
-                  {config.kind === 'star' && (
-                    <polygon
-                      points={starPoints(config.sides ?? 5)}
-                      fill={filled ? color : 'none'}
-                      fillOpacity={filled ? 0.18 : 0}
-                      stroke={color}
-                      strokeWidth={sw}
-                    />
-                  )}
-                </svg>
-                {boxHandles(isActive)}
-              </div>
-            )
-          })}
-
+                  </>
+                )}
+                <span
+                  className="tape-rotate-handle"
+                  data-tape-handle="rotate"
+                  title={translate('چرخش (با Shift در ۱۵ درجه)', 'Rotate (Shift for 15° steps)')}
+                />
+              </>
+            ) : (
+              boxHandles(isActive)
+            )}
+          </div>
+        )
+      })}
     </>
   )
 }

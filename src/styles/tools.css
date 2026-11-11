@@ -733,25 +733,9 @@ svg.ink-layer.is-object-selected {
   border-radius: 3px;
   pointer-events: none;
 }
-.shape-picker {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  margin-bottom: 14px;
-}
-.shape-picker button {
-  height: 34px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface-2);
-  color: var(--muted);
-  font-size: 10.5px;
-}
-.shape-picker button.is-active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent-ink);
-  font-weight: 600;
+.guide-icon--triangle {
+  border: 0;
+  background: linear-gradient(135deg, transparent 47%, var(--accent) 48% 50%, transparent 51%);
 }
 .guide-picker {
   display: grid;

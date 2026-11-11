@@ -205,6 +205,19 @@ export function AboutPage() {
 
         <section className="about-section">
           <div className="about-section__head">
+            <span className="eyebrow">{t('نام', 'The name')}</span>
+            <h2>NIVISIO · {t('نیویسیو (Niviso)', 'Niviso')}</h2>
+            <p>
+              {t(
+                'NIVISIO از ریشهٔ باستانی «نیویسدن / نبشتن» (پهلوی: niwīstan) به معنای نوشتن و کتابت گرفته شده است؛ نامی توصیف‌گر برای ابزار یادداشت‌برداری و مدیریت اسناد که با هویت مدرن و لوگوی اپ هماهنگ است.',
+                'NIVISIO comes from the ancient Persian root “niwīstan” (نیویسدن / نبشتن; Middle Persian: niwīstan), meaning to write and inscribe. The name describes a note-taking and document tool while matching the app’s modern identity and logo.',
+              )}
+            </p>
+          </div>
+        </section>
+
+        <section className="about-section">
+          <div className="about-section__head">
             <span className="eyebrow">{t('قابلیت‌ها', 'Features')}</span>
             <h2>{t('یک ابزار، از خواندن تا یادداشت‌برداری', 'One tool, from reading to note-taking')}</h2>
             <p>{t('همه اجزای مسیر مطالعه در یک اپ محلی جمع شده‌اند.', 'Everything in the study workflow lives in one local app.')}</p>
@@ -341,6 +354,10 @@ export function AboutPage() {
             <p>
               {t('مستندات:', 'Docs:')} <code>README.md</code> {t('و', 'and')}{' '}
               <code>AGENTS.md</code>
+              {' · '}
+              <a href="https://github.com/ssmns/nivisio" target="_blank" rel="noreferrer">
+                github.com/ssmns/nivisio
+              </a>
             </p>
           </article>
         </section>
@@ -462,7 +479,7 @@ export function AboutPage() {
       </main>
 
       <footer className="about__footer">
-        <span>{t('nivisio · نسخه ۱.۱.۳ · ساختهٔ جادو استودیو', 'nivisio · v1.1.3 · by Jadoo Studio')}</span>
+        <span>{t('nivisio · نسخه ۱.۱.۴ · ساختهٔ جادو استودیو', 'nivisio · v1.1.4 · by Jadoo Studio')}</span>
         <span>
           <Search size={13} /> {t('ساخته‌شده با React، PDF.js، Dexie و Capacitor', 'Built with React, PDF.js, Dexie and Capacitor')}
         </span>

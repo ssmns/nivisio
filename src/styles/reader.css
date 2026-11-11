@@ -138,6 +138,8 @@
   background-image: radial-gradient(var(--line-strong) 0.6px, transparent 0.6px);
   background-size: 16px 16px;
   scrollbar-width: thin;
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
 }
 .reader__panel {
   width: var(--panel-w);

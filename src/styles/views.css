@@ -295,8 +295,6 @@
   gap: 8px;
   width: 100%;
   margin-bottom: 24px;
-  content-visibility: auto;
-  contain-intrinsic-size: 900px;
 }
 .page-slot.is-current .page-slot__label {
   color: var(--accent-ink);

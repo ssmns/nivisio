@@ -2,6 +2,34 @@
 
 All notable changes to nivisio are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.4] — 2026-11-11
+
+### Added
+
+- Curved arrow shape with an adjustable bend handle.
+- Bézier arrow with two independent control handles.
+- Icon previews for every shape kind in the shape picker.
+- Lines and arrows are now defined by two draggable endpoints, so either end can be moved after drawing.
+- Dedicated pan tool for one-finger and mouse panning.
+- Pinch zoom is anchored to the point between the fingers; double-tap zooms in and out in select/pan modes.
+- Two-finger drag pans while a drawing tool is active, without leaving stray ink.
+- Area and radar chart types, including PDF export support.
+- Documented the origin of the NIVISIO name in the README, Persian docs and About page.
+
+### Fixed
+
+- Zoomed pages can now be panned horizontally on touch devices, including RTL Persian layouts. Page slots no longer use `content-visibility` paint containment, which was clipping the scrollable overflow.
+- Shape strokes, arrowheads and angles no longer distort when the shape box is stretched.
+- Moving or resizing a rotated arrow keeps the dragged endpoint exactly under the pointer; endpoint edits reset the redundant rotation without moving the line.
+- Horizontal lines and arrows have a larger invisible grab area, so they are easy to move on touch screens.
+- The export pipeline draws the new two-point lines and curved arrows with the same geometry.
+
+### Repository
+
+- [github.com/ssmns/nivisio](https://github.com/ssmns/nivisio)
+
+---
+
 ## [1.1.3] — 2026-11-12
 
 ### Fixed

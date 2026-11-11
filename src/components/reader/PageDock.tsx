@@ -10,6 +10,7 @@ import {
   Plus,
 } from 'lucide-react'
 import type { FitMode, ReaderTheme, ViewMode } from '../../lib/types'
+import { MAX_ZOOM, MIN_ZOOM } from '../../lib/zoom'
 import { toFa } from '../../lib/utils'
 import { useI18n } from '../../lib/i18n'
 import { ViewMenu } from '../ViewMenu'
@@ -113,7 +114,7 @@ export function PageDock({
         <button
           type="button"
           className="icon-btn icon-btn--xs"
-          onClick={() => onZoom(Math.max(0.6, zoom - 0.15))}
+          onClick={() => onZoom(Math.max(MIN_ZOOM, zoom - 0.15))}
           title={t('کوچک‌تر', 'Zoom out')}
           aria-label={t('کوچک‌تر', 'Zoom out')}
         >
@@ -126,7 +127,7 @@ export function PageDock({
         <button
           type="button"
           className="icon-btn icon-btn--xs"
-          onClick={() => onZoom(Math.min(2.4, zoom + 0.15))}
+          onClick={() => onZoom(Math.min(MAX_ZOOM, zoom + 0.15))}
           title={t('بزرگ‌تر', 'Zoom in')}
           aria-label={t('بزرگ‌تر', 'Zoom in')}
         >

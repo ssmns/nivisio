@@ -386,6 +386,7 @@ export function ReaderPage() {
     enabled: !modalOpen && stageSize.width > 0,
     zoom,
     onZoom: setZoom,
+    allowDoubleTap: tool === 'select' || tool === 'pan',
   })
 
 
@@ -551,6 +552,14 @@ export function ReaderPage() {
     if (next === 'tape') {
       toast.show(t('روی محتوا بکشید تا نوار چسب آن را بپوشاند.', 'Drag over content to cover it with tape.'))
     }
+    if (next === 'pan') {
+      toast.show(
+        t(
+          'برای جابه‌جایی صفحه بکشید. با دو انگشت هم می‌توانید زوم و جابه‌جایی کنید.',
+          'Drag to pan the page. Pinch with two fingers to zoom and pan.',
+        ),
+      )
+    }
   }
 
   const submitPageInput = () => {
@@ -659,24 +668,11 @@ export function ReaderPage() {
   const addShape = async (
     rect: NormRect,
     flips: { flipX: boolean; flipY: boolean },
+    points?: { start: NormPoint; end: NormPoint },
   ) => {
-    if (!doc || !pendingShape) return
-    const now = Date.now()
-    const id = newId()
-    await db.annotations.add({
-      id,
-      docId: doc.id,
-      pageRef,
-      page: pageNumber,
-      type: 'shape',
-      color: inkColor,
-      category,
-      rects: [rect],
-      shape: { ...pendingShape, ...flips },
-      rotation: 0,
-      createdAt: now,
-      updatedAt: now,
-    })
+    if (!pendingShape) return
+    const id = await actions.addShape(pendingShape, rect, flips, points)
+    if (!id) return
     setPendingShape(null)
     setActiveObjectId(id)
     setTool('select')
@@ -930,8 +926,8 @@ export function ReaderPage() {
     onPlaceObject: (point, pageAspect) => {
       void placeObject(point, pageAspect)
     },
-    onAddShape: (rect, flips) => {
-      void addShape(rect, flips)
+    onAddShape: (rect, flips, points) => {
+      void addShape(rect, flips, points)
     },
     onAddGuide: (point, pageAspect) => {
       void addGuide(point, pageAspect)

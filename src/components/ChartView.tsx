@@ -89,12 +89,26 @@ export function ChartView({ config, compact }: ChartViewProps) {
     )
   }
 
-  if (config.kind === 'line') {
-    const points = values
+  if (config.kind === 'radar') {
+    const cx = 50
+    const cy = 52
+    const radius = compact ? 25 : 29
+    const count = Math.max(3, values.length)
+    const series = Array.from({ length: count }, (_, index) => values[index] ?? 0)
+    const angleAt = (index: number) => -Math.PI / 2 + (index * Math.PI * 2) / count
+    const pointAt = (index: number, ratio: number) => ({
+      x: cx + Math.cos(angleAt(index)) * radius * ratio,
+      y: cy + Math.sin(angleAt(index)) * radius * ratio,
+    })
+    const polygonAt = (ratio: number) =>
+      Array.from({ length: count }, (_, index) => {
+        const point = pointAt(index, ratio)
+        return `${point.x},${point.y}`
+      }).join(' ')
+    const shape = series
       .map((value, index) => {
-        const x = 12 + (index / Math.max(1, values.length - 1)) * 78
-        const y = 82 - (value / max) * 62
-        return `${x},${y}`
+        const point = pointAt(index, Math.max(0.03, value / max))
+        return `${point.x},${point.y}`
       })
       .join(' ')
     return (
@@ -102,7 +116,97 @@ export function ChartView({ config, compact }: ChartViewProps) {
         className="chart-svg"
         viewBox="0 0 100 100"
         role="img"
-        aria-label={config.title || translate('نمودار خطی', 'Line chart')}
+        aria-label={config.title || translate('نمودار راداری', 'Radar chart')}
+      >
+        {background}
+        {config.title && (
+          <text x="50" y="9" textAnchor="middle" className="chart-title">
+            {config.title}
+          </text>
+        )}
+        {[0.33, 0.66, 1].map((ratio) => (
+          <polygon
+            key={ratio}
+            points={polygonAt(ratio)}
+            fill="none"
+            stroke="#e2e4ec"
+            strokeWidth=".5"
+          />
+        ))}
+        {Array.from({ length: count }, (_, index) => {
+          const point = pointAt(index, 1)
+          return (
+            <line
+              key={`axis-${index}`}
+              x1={cx}
+              y1={cy}
+              x2={point.x}
+              y2={point.y}
+              stroke="#e2e4ec"
+              strokeWidth=".5"
+            />
+          )
+        })}
+        <polygon
+          points={shape}
+          fill={config.color || '#f43f5e'}
+          fillOpacity=".2"
+          stroke={config.color || '#f43f5e'}
+          strokeWidth="1.5"
+        />
+        {series.map((value, index) => {
+          const point = pointAt(index, Math.max(0.03, value / max))
+          return (
+            <circle
+              key={`point-${index}`}
+              cx={point.x}
+              cy={point.y}
+              r="1.4"
+              fill="#fff"
+              stroke={config.color || '#f43f5e'}
+              strokeWidth="1"
+            >
+              <title>{`${labels[index] ?? ''}: ${value}`}</title>
+            </circle>
+          )
+        })}
+        {Array.from({ length: count }, (_, index) => {
+          const point = pointAt(index, 1.16)
+          const anchor =
+            Math.abs(point.x - cx) < 4 ? 'middle' : point.x > cx ? 'start' : 'end'
+          return (
+            <text
+              key={`label-${index}`}
+              x={point.x}
+              y={point.y + 1.5}
+              textAnchor={anchor}
+              className="chart-label"
+            >
+              {labels[index] ?? ''}
+            </text>
+          )
+        })}
+      </svg>
+    )
+  }
+
+  if (config.kind === 'line' || config.kind === 'area') {
+    const coords = values.map((value, index) => ({
+      x: 12 + (index / Math.max(1, values.length - 1)) * 78,
+      y: 82 - (value / max) * 62,
+    }))
+    const points = coords.map((point) => `${point.x},${point.y}`).join(' ')
+    return (
+      <svg
+        className="chart-svg"
+        viewBox="0 0 100 100"
+        role="img"
+        aria-label={
+          config.title ||
+          (config.kind === 'area'
+            ? translate('نمودار سطحی', 'Area chart')
+            : translate('نمودار خطی', 'Line chart'))
+        }
       >
         {background}
         {config.title && (
@@ -111,6 +215,14 @@ export function ChartView({ config, compact }: ChartViewProps) {
           </text>
         )}
         <line x1="12" y1="82" x2="92" y2="82" stroke="#c9ccd8" strokeWidth=".8" />
+        {config.kind === 'area' && (
+          <polygon
+            points={`12,82 ${points} 90,82`}
+            fill={config.color || '#f43f5e'}
+            fillOpacity=".2"
+            stroke="none"
+          />
+        )}
         <polyline
           points={points}
           fill="none"
@@ -119,18 +231,21 @@ export function ChartView({ config, compact }: ChartViewProps) {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {values.map((value, index) => {
-          const x = 12 + (index / Math.max(1, values.length - 1)) * 78
-          const y = 82 - (value / max) * 62
-          return (
-            <g key={index}>
-              <circle cx={x} cy={y} r="2" fill="#fff" stroke={config.color || '#f43f5e'} strokeWidth="1.5" />
-              <text x={x} y={92} textAnchor="middle" className="chart-label">
-                {labels[index] ?? ''}
-              </text>
-            </g>
-          )
-        })}
+        {coords.map((point, index) => (
+          <g key={index}>
+            <circle
+              cx={point.x}
+              cy={point.y}
+              r="2"
+              fill="#fff"
+              stroke={config.color || '#f43f5e'}
+              strokeWidth="1.5"
+            />
+            <text x={point.x} y={92} textAnchor="middle" className="chart-label">
+              {labels[index] ?? ''}
+            </text>
+          </g>
+        ))}
       </svg>
     )
   }

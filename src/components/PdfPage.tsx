@@ -13,6 +13,10 @@ import { TapeLayer } from './page/TapeLayer'
 import { InkLayer } from './page/InkLayer'
 import { LinkNoteLayer } from './page/LinkNoteLayer'
 import { NotebookGrid } from './page/NotebookGrid'
+import { useShapeDraft } from '../hooks/useShapeDraft'
+import { useShapeEndpoints } from '../hooks/useShapeEndpoints'
+import { usePagePan } from '../hooks/usePagePan'
+import { isLineShape } from '../lib/shapes'
 import { pdfjs } from '../lib/pdf'
 import type {
   Annotation,
@@ -76,7 +80,11 @@ export interface PageViewProps {
   onSelectObject: (id: string | null) => void
   onUpdateAnnotation: (id: string, patch: Partial<Annotation>) => void
   onPlaceObject: (point: NormPoint, pageAspect: number) => void
-  onAddShape: (rect: NormRect, flips: { flipX: boolean; flipY: boolean }) => void
+  onAddShape: (
+    rect: NormRect,
+    flips: { flipX: boolean; flipY: boolean },
+    points?: { start: NormPoint; end: NormPoint },
+  ) => void
   onAddGuide: (point: NormPoint, pageAspect: number) => void
   pendingShape?: ShapeConfig | null
   snapEnabled?: boolean
@@ -140,8 +148,6 @@ export function PdfPage({
   const [draftPressures, setDraftPressures] = useState<number[]>([])
   const [linkDraft, setLinkDraft] = useState<NormRect | null>(null)
   const [tapeDraft, setTapeDraft] = useState<NormRect | null>(null)
-  const [shapeDraft, setShapeDraft] = useState<NormRect | null>(null)
-  const shapeStartRef = useRef<NormPoint | null>(null)
   const [lassoPath, setLassoPath] = useState<NormPoint[]>([])
   const [moveDelta, setMoveDelta] = useState<NormPoint>({ x: 0, y: 0 })
   const [objectDelta, setObjectDelta] = useState<NormPoint>({ x: 0, y: 0 })
@@ -327,6 +333,22 @@ export function PdfPage({
       annotations,
     })
 
+  const { shapeDraft, beginShape, moveShape, finishShape } = useShapeDraft({
+    pendingShape,
+    pointFromClient,
+    snapPoint,
+    onAddShape,
+  })
+
+  const { preview: shapeEndpointPreview, beginShapeEndpoint } = useShapeEndpoints({
+    pointFromClient,
+    snapPoint,
+    getPageBox: () => pageRef.current?.getBoundingClientRect() ?? null,
+    onUpdateAnnotation,
+  })
+
+  const { beginPan, movePan, finishPan } = usePagePan()
+
   const captureSelection = () => {
     if (isNotebook || (tool !== 'select' && tool !== 'highlight')) return
     const selection = window.getSelection()
@@ -370,6 +392,16 @@ export function PdfPage({
 
   const beginStroke = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'pen') lastPenAtRef.current = Date.now()
+    if (!event.isPrimary) {
+      if (event.pointerType === 'touch' && Date.now() - lastPenAtRef.current >= 1800) {
+        drawingRef.current = false
+        draftPointsRef.current = []
+        draftPressuresRef.current = []
+        setDraft([])
+        setDraftPressures([])
+      }
+      return
+    }
     if (event.pointerType === 'touch' && Date.now() - lastPenAtRef.current < 1800) return
     if (event.button !== 0 && event.pointerType === 'mouse') return
     const point = pointFromClient(event.clientX, event.clientY)
@@ -522,6 +554,22 @@ export function PdfPage({
     annotation: Annotation,
   ) => {
     if (tool !== 'select') return
+    const shapeHandle = (event.target as HTMLElement).closest(
+      '[data-shape-handle]',
+    ) as HTMLElement | null
+    if (shapeHandle && annotation.type === 'shape' && isLineShape(annotation.shape?.kind)) {
+      const handle = shapeHandle.dataset.shapeHandle
+      if (
+        handle === 'start' ||
+        handle === 'end' ||
+        handle === 'bend' ||
+        handle === 'bend1' ||
+        handle === 'bend2'
+      ) {
+        beginShapeEndpoint(event, annotation, handle)
+        return
+      }
+    }
     event.stopPropagation()
     event.preventDefault()
     onSelectObject(annotation.id)
@@ -671,66 +719,6 @@ export function PdfPage({
       )
     }
     onUpdateAnnotation(drag.id, patch)
-  }
-
-  const beginShape = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0 && event.pointerType === 'mouse') return
-    const point = pointFromClient(event.clientX, event.clientY)
-    if (!point) return
-    const snapped = snapPoint(point)
-    event.currentTarget.setPointerCapture(event.pointerId)
-    shapeStartRef.current = snapped
-    setShapeDraft({ x: snapped.x, y: snapped.y, w: 0, h: 0 })
-  }
-
-  const moveShape = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const start = shapeStartRef.current
-    if (!start) return
-    const point = pointFromClient(event.clientX, event.clientY)
-    if (!point) return
-    let end = snapPoint(point, start)
-    if (
-      event.shiftKey &&
-      pendingShape &&
-      (pendingShape.kind === 'line' || pendingShape.kind === 'arrow')
-    ) {
-      const dx = end.x - start.x
-      const dy = end.y - start.y
-      const length = Math.hypot(dx, dy)
-      const angle = Math.round(Math.atan2(dy, dx) / (Math.PI / 12)) * (Math.PI / 12)
-      end = { x: start.x + Math.cos(angle) * length, y: start.y + Math.sin(angle) * length }
-    }
-    setShapeDraft({
-      x: Math.min(start.x, end.x),
-      y: Math.min(start.y, end.y),
-      w: Math.abs(end.x - start.x),
-      h: Math.abs(end.y - start.y),
-    })
-  }
-
-  const finishShape = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const start = shapeStartRef.current
-    if (!start) return
-    shapeStartRef.current = null
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-    const point = pointFromClient(event.clientX, event.clientY)
-    const end = point ? snapPoint(point, start) : start
-    setShapeDraft(null)
-    const rect = {
-      x: Math.min(start.x, end.x),
-      y: Math.min(start.y, end.y),
-      w: Math.abs(end.x - start.x),
-      h: Math.abs(end.y - start.y),
-    }
-    if (rect.w < 0.008 && rect.h < 0.008) {
-      rect.w = 0.14
-      rect.h = 0.1
-      rect.x = start.x - rect.w / 2
-      rect.y = start.y - rect.h / 2
-    }
-    onAddShape(rect, { flipX: end.x < start.x, flipY: end.y < start.y })
   }
 
   const beginLasso = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -1071,6 +1059,7 @@ export function PdfPage({
             beginTapeTransform={beginTapeTransform}
             pageSize={size}
             pagePoints={pagePoints}
+            shapePreview={shapeEndpointPreview}
           />
 
           <LinkNoteLayer
@@ -1118,7 +1107,9 @@ export function PdfPage({
                         ? beginErase
                         : tool === 'shape'
                           ? beginShape
-                          : undefined
+                          : tool === 'pan'
+                            ? beginPan
+                            : undefined
             }
             onPointerMove={
               tool === 'pen' || tool === 'marker'
@@ -1133,7 +1124,9 @@ export function PdfPage({
                         ? moveErase
                         : tool === 'shape'
                           ? moveShape
-                          : undefined
+                          : tool === 'pan'
+                            ? movePan
+                            : undefined
             }
             onPointerUp={
               tool === 'pen' || tool === 'marker'
@@ -1148,7 +1141,9 @@ export function PdfPage({
                         ? finishErase
                         : tool === 'shape'
                           ? finishShape
-                          : undefined
+                          : tool === 'pan'
+                            ? finishPan
+                            : undefined
             }
             onPointerCancel={
               tool === 'pen' || tool === 'marker'
@@ -1163,7 +1158,9 @@ export function PdfPage({
                         ? finishErase
                         : tool === 'shape'
                           ? finishShape
-                          : undefined
+                          : tool === 'pan'
+                            ? finishPan
+                            : undefined
             }
             onClick={
               tool === 'note' ||

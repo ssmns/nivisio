@@ -4,6 +4,7 @@ import {
   Brush,
   Eraser,
   FilePlus2,
+  Hand,
   Highlighter,
   Lasso,
   LayoutGrid,
@@ -95,6 +96,13 @@ export function ReaderToolbar({
       icon: MousePointer2,
       active: tool === 'select',
       onClick: () => onSelectTool('select'),
+    },
+    {
+      key: 'pan',
+      label: t('جابه‌جایی', 'Pan'),
+      icon: Hand,
+      active: tool === 'pan',
+      onClick: () => onSelectTool('pan'),
     },
     {
       key: 'highlight',

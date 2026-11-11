@@ -1,7 +1,7 @@
 {
   "name": "nivisio",
   "private": true,
-  "version": "1.1.3",
+  "version": "1.1.4",
   "type": "module",
   "description": "nivisio — کتابخانه و دفتر یادداشت PDF با هایلایت و حاشیه‌نویسی",
   "scripts": {

@@ -11,6 +11,7 @@ import {
   type NormRect,
   type PenStyle,
   type ReaderTool,
+  type ShapeConfig,
   type TextAlign,
   type TextVerticalAlign,
   type TextStyle,
@@ -366,6 +367,37 @@ export function useReaderActions({
     [base, toast],
   )
 
+  const addShape = useCallback(
+    async (
+      config: ShapeConfig,
+      rect: NormRect,
+      flips: { flipX: boolean; flipY: boolean },
+      points?: { start: NormPoint; end: NormPoint },
+    ): Promise<string | null> => {
+      const local = points
+        ? {
+            start: {
+              x: (points.start.x - rect.x) / Math.max(0.0001, rect.w),
+              y: (points.start.y - rect.y) / Math.max(0.0001, rect.h),
+            },
+            end: {
+              x: (points.end.x - rect.x) / Math.max(0.0001, rect.w),
+              y: (points.end.y - rect.y) / Math.max(0.0001, rect.h),
+            },
+          }
+        : null
+      const annotation = base('shape', inkColor, {
+        rects: [rect],
+        shape: { ...config, ...flips, ...(local ?? {}) },
+        rotation: 0,
+      })
+      if (!annotation) return null
+      await db.annotations.add(annotation)
+      return annotation.id
+    },
+    [base, inkColor],
+  )
+
   const togglePageRead = useCallback(
     async (key: string) => {
       if (!doc) return
@@ -420,6 +452,7 @@ export function useReaderActions({
     recolorSelected,
     placeObject,
     saveLink,
+    addShape,
     togglePageRead,
     toggleBookmark,
     rotateTape,

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BarChart3, LineChart, PieChart } from 'lucide-react'
+import { AreaChart, BarChart3, LineChart, PieChart, Radar } from 'lucide-react'
 import { ChartView } from './ChartView'
 import { Modal } from './Modal'
 import { useToast } from './Toast'
@@ -123,7 +123,9 @@ export function ChartModal({ open, initial, onSave, onClose }: ChartModalProps) 
               [
                 { id: 'bar', label: t('میله‌ای', 'Bar'), icon: BarChart3 },
                 { id: 'line', label: t('خطی', 'Line'), icon: LineChart },
+                { id: 'area', label: t('سطحی', 'Area'), icon: AreaChart },
                 { id: 'pie', label: t('دایره‌ای', 'Pie'), icon: PieChart },
+                { id: 'radar', label: t('راداری', 'Radar'), icon: Radar },
               ] as const
             ).map(({ id, label, icon: Icon }) => (
               <button
