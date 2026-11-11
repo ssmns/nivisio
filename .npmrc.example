@@ -1,0 +1,3 @@
+# Copy to .npmrc only if you need a custom npm mirror.
+# The default public registry is used when .npmrc is absent.
+registry=https://registry.npmjs.org/

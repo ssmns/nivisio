@@ -1,0 +1,166 @@
+/* compact annotation panel */
+.annotations-panel {
+  padding: 8px;
+}
+.annotations-summary {
+  padding: 0 2px 7px;
+  gap: 4px;
+}
+.annotations-summary span {
+  padding: 1px 6px;
+  font-size: 9.5px;
+}
+.annotation-filters {
+  gap: 4px;
+  padding-bottom: 7px;
+}
+.annotation-filters select {
+  height: 28px;
+  font-size: 10px;
+}
+.annotation-list {
+  gap: 4px;
+}
+.annotation-item {
+  align-items: stretch;
+  min-height: 46px;
+}
+.annotation-item.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+.annotation-item.is-drag-over {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.annotation-item__drag {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  flex: none;
+  color: var(--muted-2);
+  cursor: grab;
+  border-inline-end: 1px solid var(--line);
+}
+.annotation-item__main {
+  padding: 5px 7px;
+  gap: 2px;
+}
+.annotation-item__top {
+  font-size: 9px;
+}
+.annotation-item__text {
+  font-size: 10.5px;
+  line-height: 1.55;
+  -webkit-line-clamp: 1;
+}
+.annotation-item__bottom {
+  max-height: 16px;
+}
+.annotation-item__bottom .mini-chip {
+  height: 16px;
+  font-size: 8.5px;
+}
+.annotation-item__tools {
+  flex-direction: row;
+  align-items: center;
+  gap: 1px;
+  padding: 2px 3px;
+}
+.annotation-dot {
+  margin: 0 2px 0 1px;
+}
+.annotation-inspector {
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.annotation-inspector__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.annotation-inspector__head .annotation-type {
+  font-weight: 700;
+  color: var(--accent-ink);
+  flex: 1;
+}
+.annotation-inspector__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.annotation-inspector__colors {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.annotation-inspector__field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: auto;
+  font-size: 9px;
+  color: var(--muted-2);
+}
+.annotation-inspector__field select {
+  height: 25px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  font-size: 10px;
+  padding: 0 4px;
+}
+.annotation-inspector__range {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  align-items: center;
+  gap: 6px;
+  font-size: 9.5px;
+  color: var(--muted);
+}
+.annotation-inspector__range span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.annotation-inspector__range input {
+  width: 100%;
+  accent-color: var(--accent);
+  height: 14px;
+}
+.annotation-inspector__edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 27px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.annotation-category {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted-2);
+  font-size: 8px;
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.annotation-item__main {
+  justify-content: center;
+}

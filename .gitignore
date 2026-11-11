@@ -1,0 +1,57 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+coverage/
+.playwright/
+playwright-report/
+test-results/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+*.jks
+*.apk
+*.aab
+
+# npm registry override used on the maintainer's machine
+.npmrc
+!.npmrc.example
+
+# Logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Capacitor / Android build output
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/.idea/
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+
+# Local backups and generated exports
+backups/
+*.bak
+
+# Generated logo previews / internal assets (keep the SVG sources and public assets)
+.icon.png
+logo/drawing.svg
+logo/Page 3.png
+images/

@@ -1,0 +1,250 @@
+/* ---------- responsive ---------- */
+
+@media (max-width: 1180px) {
+  .doc-grid {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  }
+  :root {
+    --panel-w: 320px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .library__topbar {
+    padding: 12px 20px;
+  }
+  .library__inner {
+    padding: 24px 22px 56px;
+  }
+  .reader__panel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    inset-inline-end: 0;
+    width: min(var(--panel-w), 92vw);
+    box-shadow: var(--shadow-lg);
+    border-inline-start: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    transform: translateX(100%);
+    transition: transform 0.22s ease;
+    box-shadow: var(--shadow-lg);
+    min-height: 100dvh;
+  }
+  .sidebar--open {
+    transform: translateX(0);
+  }
+  .sidebar__close {
+    display: inline-flex;
+  }
+  .library__menu {
+    display: inline-flex;
+  }
+  .sort-select span {
+    display: none;
+  }
+  .reader__toolbar {
+    padding: 6px 10px;
+    gap: 6px 8px;
+  }
+  .category-select span {
+    display: none;
+  }
+  .category-select {
+    height: 30px;
+    padding: 0 6px;
+  }
+  .category-select select {
+    max-width: 64px;
+    font-size: 10.5px;
+  }
+  .lasso-bar {
+    bottom: 58px;
+    gap: 4px;
+    padding: 4px 5px;
+  }
+  .lasso-bar__hint {
+    display: none;
+  }
+  .lasso-bar__count {
+    font-size: 9.5px;
+  }
+  .chart-modal,
+  .doc-edit {
+    grid-template-columns: 1fr;
+  }
+  .chart-modal__preview {
+    min-height: 190px;
+  }
+  .cover-picker__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-picker {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .library__topbar {
+    flex-wrap: wrap;
+    gap: 9px;
+    padding: 10px 14px;
+  }
+  .search-box {
+    order: 3;
+    width: 100%;
+  }
+  .library__topbar-actions {
+    margin-inline-start: auto;
+  }
+  .library__topbar-actions .btn span {
+    display: none;
+  }
+  .library__inner {
+    padding: 20px 14px 52px;
+  }
+  .library__heading {
+    margin-bottom: 16px;
+  }
+  .doc-grid {
+    grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+    gap: 14px 11px;
+  }
+  .doc-card__body {
+    padding: 10px 10px 9px;
+  }
+  .doc-card__title {
+    font-size: 12.5px;
+    min-height: 40px;
+  }
+  .doc-card__date,
+  .doc-card__annotations {
+    display: none;
+  }
+  .continue-card {
+    gap: 10px;
+    padding: 10px;
+  }
+  .continue-card__cta {
+    display: none;
+  }
+  .continue-card__progress > span {
+    width: 110px;
+  }
+  .empty-library {
+    padding: 30px 16px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .field--check {
+    padding-top: 0;
+  }
+  .reader__bar {
+    padding: 8px 10px;
+    gap: 8px;
+    min-height: 56px;
+  }
+  .reader__title h1 {
+    font-size: 13px;
+  }
+  .reader__bar-actions .btn--done span {
+    display: none;
+  }
+  .reader__bar-actions .btn--done {
+    width: 38px;
+    padding: 0;
+  }
+  .tool-btn span {
+    display: none;
+  }
+  .tool-btn {
+    width: 33px;
+    justify-content: center;
+    padding: 0;
+  }
+  .tool-group {
+    gap: 1px;
+  }
+  .color-picker {
+    gap: 5px;
+  }
+  .color-dot--sm {
+    width: 21px;
+    height: 21px;
+  }
+  .zoom-group {
+    margin-inline-start: 0;
+  }
+  .zoom-group .icon-btn:last-child {
+    display: none;
+  }
+  .reader__stage {
+    padding: 12px 10px 70px;
+  }
+  .page-dock {
+    bottom: 10px;
+    gap: 4px;
+  }
+  .page-dock__label,
+  .page-dock__progress {
+    display: none;
+  }
+  .toast-stack,
+  .import-toast {
+    inset-inline: 14px;
+    left: 14px;
+    right: 14px;
+    bottom: 112px;
+    max-width: none;
+    transform: none;
+    align-items: stretch;
+  }
+  .import-toast {
+    bottom: 14px;
+  }
+  .selection-popover {
+    gap: 6px;
+    padding: 6px 7px;
+  }
+  .selection-popover__label {
+    display: none;
+  }
+  .selection-popover .color-dot {
+    width: 21px;
+    height: 21px;
+  }
+}
+
+@media (max-width: 480px) {
+  .doc-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .library__heading h1 {
+    font-size: 20px;
+  }
+  .library__subtitle {
+    font-size: 11px;
+  }
+  .empty-library__actions {
+    flex-direction: column;
+  }
+  .empty-library__actions .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

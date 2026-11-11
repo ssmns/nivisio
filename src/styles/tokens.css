@@ -1,0 +1,197 @@
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font: 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  --bg: #fdf3f6;
+  --surface: #fffdfd;
+  --surface-2: #fff8fa;
+  --surface-3: #f9e7ed;
+  --ink: #2b161d;
+  --ink-soft: #4a2b35;
+  --muted: #856571;
+  --muted-2: #a88591;
+  --line: #f0d7e0;
+  --line-strong: #e6bccb;
+  --accent: #f43f5e;
+  --accent-strong: #dc2646;
+  --accent-soft: #ffe4ec;
+  --accent-ink: #a80f33;
+  --danger: #d64545;
+  --danger-soft: #fdecec;
+  --success: #16875f;
+  --success-soft: #e3f7ef;
+  --warn: #b7791f;
+  --shadow-sm: 0 1px 2px rgba(28, 28, 38, 0.06), 0 1px 3px rgba(28, 28, 38, 0.05);
+  --shadow-md: 0 8px 24px rgba(28, 28, 38, 0.09), 0 2px 6px rgba(28, 28, 38, 0.05);
+  --shadow-lg: 0 24px 60px rgba(18, 18, 30, 0.18);
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --sidebar-w: 276px;
+  --panel-w: 348px;
+}
+
+:root[data-theme='dark'] {
+  --bg: #160d12;
+  --surface: #21131a;
+  --surface-2: #291820;
+  --surface-3: #341e29;
+  --ink: #f7e9ee;
+  --ink-soft: #e0c3ce;
+  --muted: #b994a2;
+  --muted-2: #8e6c7b;
+  --line: #3a2230;
+  --line-strong: #4b2c3d;
+  --accent: #ff6f91;
+  --accent-strong: #ff8fab;
+  --accent-soft: #4a1d2d;
+  --accent-ink: #ffc3d2;
+  --danger: #ff7474;
+  --danger-soft: #3a2023;
+  --success: #4bd4a1;
+  --success-soft: #17342b;
+  --warn: #f0b35c;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  min-height: 0;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(244, 63, 94, 0.22);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- shared atoms ---------- */
+
+
+/* Decorative line-art layer: fixed, faint, bottom-left, behind all content. */
+.app-canvas {
+  position: relative;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.app-art {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: min(780px, 74vw);
+  aspect-ratio: 210.714 / 147.786;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--accent);
+  opacity: 0.075;
+  transform: translate(-7%, 5%);
+  -webkit-mask: url('/line-art.svg') no-repeat left bottom / contain;
+  mask: url('/line-art.svg') no-repeat left bottom / contain;
+}
+:root[data-theme='dark'] .app-art {
+  opacity: 0.13;
+}
+.app-canvas > .app-shell,
+.app-canvas > .reader,
+.app-canvas > .about,
+.app-canvas > .templates-page {
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 720px) {
+  .app-art {
+    width: 118vw;
+    opacity: 0.055;
+    transform: translate(-14%, 8%);
+  }
+}
+
+/* In English/LTR mode the decorative line art moves to bottom-right. */
+html[data-lang='en'] .app-art {
+  left: auto;
+  right: 0;
+  transform: translate(7%, 5%);
+  -webkit-mask-position: right bottom;
+  mask-position: right bottom;
+}
+@media (max-width: 720px) {
+  html[data-lang='en'] .app-art {
+    transform: translate(14%, 8%);
+  }
+}

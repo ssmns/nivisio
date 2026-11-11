@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible problem in nivisio.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please fill this in English or Persian.
+        برای گزارش باگ می‌توانید انگلیسی یا فارسی بنویسید.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Click ...
+        3. Scroll ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      description: Release version or commit SHA.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser / OS / device
+      placeholder: Chrome 130 on Android 14, or Firefox 132 on Linux
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: UI language
+      options:
+        - Persian (RTL)
+        - English (LTR)
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, recording or console output
+      description: Drag files here or paste relevant errors.
+    validations:
+      required: false

@@ -1,0 +1,76 @@
+/* ---------- drop / import ---------- */
+
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(18, 19, 26, 0.55);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.drop-overlay__card {
+  width: min(430px, 90vw);
+  padding: 38px;
+  border-radius: 22px;
+  border: 2px dashed var(--accent);
+  background: var(--surface);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  color: var(--accent);
+}
+.drop-overlay__card h2 {
+  margin-top: 12px;
+  font-size: 18px;
+  color: var(--ink);
+}
+.drop-overlay__card p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+.import-toast {
+  position: fixed;
+  inset-inline-end: 24px;
+  bottom: 24px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 260px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: #20222e;
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+.import-toast div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.import-toast strong {
+  font-size: 12.5px;
+}
+.import-toast div > span {
+  font-size: 10.5px;
+  color: #b9bccb;
+}
+.import-toast__bar {
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.18) !important;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.import-toast__bar > span {
+  display: block;
+  height: 100%;
+  background: #9b8fff;
+  transition: width 0.2s ease;
+}
+
+/* ---------- modal & forms ---------- */

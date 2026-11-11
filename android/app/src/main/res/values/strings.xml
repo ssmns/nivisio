@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">nivisio</string>
+    <string name="title_activity_main">nivisio</string>
+    <string name="package_name">ir.nivisio.app</string>
+    <string name="custom_url_scheme">ir.nivisio.app</string>
+</resources>
