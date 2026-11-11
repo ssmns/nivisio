@@ -23,6 +23,8 @@
 
 ---
 
+> [Full Persian feature list and changelog](./CHANGELOG.fa.md)
+
 ## Features
 
 ### Library and reading
