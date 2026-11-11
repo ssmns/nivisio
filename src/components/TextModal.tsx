@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import { Bold, Italic } from 'lucide-react'
 import {
   ANNOTATION_CATEGORIES,
   INK_COLORS,
   TEXT_SIZES,
   type TextAlign,
+  type TextStyle,
+  type TextVerticalAlign,
 } from '../lib/types'
 import { Modal } from './Modal'
 import { useI18n } from '../lib/i18n'
@@ -15,12 +18,16 @@ interface TextModalProps {
   initialSize?: number
   initialColor?: string
   initialAlign?: TextAlign
+  initialVerticalAlign?: TextVerticalAlign
+  initialTextStyle?: TextStyle
   initialCategory?: string
   onSave: (value: {
     text: string
     fontSize: number
     color: string
     textAlign: TextAlign
+    verticalAlign: TextVerticalAlign
+    textStyle: TextStyle
     category: string
   }) => void
   onClose: () => void
@@ -32,6 +39,8 @@ export function TextModal({
   initialSize,
   initialColor,
   initialAlign,
+  initialVerticalAlign,
+  initialTextStyle,
   initialCategory,
   onSave,
   onClose,
@@ -41,6 +50,8 @@ export function TextModal({
   const [size, setSize] = useState(0.024)
   const [color, setColor] = useState<string>(INK_COLORS[0].value)
   const [align, setAlign] = useState<TextAlign>('right')
+  const [verticalAlign, setVerticalAlign] = useState<TextVerticalAlign>('top')
+  const [textStyle, setTextStyle] = useState<TextStyle>('normal')
   const [category, setCategory] = useState('عمومی')
 
   useEffect(() => {
@@ -49,8 +60,10 @@ export function TextModal({
     setSize(initialSize ?? 0.024)
     setColor(initialColor ?? INK_COLORS[0].value)
     setAlign(initialAlign ?? 'right')
+    setVerticalAlign(initialVerticalAlign ?? 'top')
+    setTextStyle(initialTextStyle ?? 'normal')
     setCategory(initialCategory ?? 'عمومی')
-  }, [open, initialText, initialSize, initialColor, initialAlign, initialCategory])
+  }, [open, initialText, initialSize, initialColor, initialAlign, initialVerticalAlign, initialTextStyle, initialCategory])
 
   return (
     <Modal
@@ -66,7 +79,17 @@ export function TextModal({
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() => onSave({ text, fontSize: size, color, textAlign: align, category })}
+            onClick={() =>
+              onSave({
+                text,
+                fontSize: size,
+                color,
+                textAlign: align,
+                verticalAlign,
+                textStyle,
+                category,
+              })
+            }
             disabled={!text.trim()}
           >
             {t('ذخیره متن', 'Save text')}
@@ -86,18 +109,76 @@ export function TextModal({
             placeholder={t('متن فارسی یا English را اینجا بنویسید…', 'Write Persian or English text here…')}
           />
         </label>
-        <label className="field">
-          <span>{t('اندازه', 'Size')}</span>
-          <select value={size} onChange={(event) => setSize(Number(event.target.value))}>
+        <div className="field field--full">
+          <span>{t('اندازه فونت', 'Font size')}</span>
+          <div className="font-size-control">
+            <input
+              type="range"
+              min="0.012"
+              max="0.08"
+              step="0.002"
+              value={size}
+              onChange={(event) => setSize(Number(event.target.value))}
+              aria-label={t('اندازه فونت', 'Font size')}
+            />
+            <strong>{Math.round(size * 1000)}</strong>
+          </div>
+          <div className="font-size-presets">
             {TEXT_SIZES.map((item) => (
-              <option key={item.name} value={item.value}>
+              <button
+                key={item.name}
+                type="button"
+                className={Math.abs(size - item.value) < 0.001 ? 'is-active' : ''}
+                onClick={() => setSize(item.value)}
+              >
                 {lang === 'en' ? item.nameEn : item.name}
-              </option>
+              </button>
             ))}
-          </select>
-        </label>
+            <button
+              type="button"
+              className={size >= 0.05 ? 'is-active' : ''}
+              onClick={() => setSize(0.05)}
+            >
+              {t('خیلی بزرگ', 'XL')}
+            </button>
+          </div>
+        </div>
+        <div className="field field--full">
+          <span>{t('استایل متن', 'Text style')}</span>
+          <div className="text-style-picker">
+            <button
+              type="button"
+              className={textStyle === 'normal' ? 'is-active' : ''}
+              onClick={() => setTextStyle('normal')}
+            >
+              {t('عادی', 'Normal')}
+            </button>
+            <button
+              type="button"
+              className={textStyle === 'bold' ? 'is-active' : ''}
+              onClick={() => setTextStyle('bold')}
+            >
+              <Bold size={13} /> {t('بولد', 'Bold')}
+            </button>
+            <button
+              type="button"
+              className={textStyle === 'italic' ? 'is-active' : ''}
+              onClick={() => setTextStyle('italic')}
+            >
+              <Italic size={13} /> {t('ایتالیک', 'Italic')}
+            </button>
+            <button
+              type="button"
+              className={textStyle === 'bold-italic' ? 'is-active' : ''}
+              onClick={() => setTextStyle('bold-italic')}
+            >
+              <Bold size={13} />
+              <Italic size={13} />
+            </button>
+          </div>
+        </div>
         <label className="field">
-          <span>{t('تراز', 'Align')}</span>
+          <span>{t('تراز افقی', 'Horizontal align')}</span>
           <select
             value={align}
             onChange={(event) => setAlign(event.target.value as TextAlign)}
@@ -105,6 +186,17 @@ export function TextModal({
             <option value="right">{t('راست', 'Right')}</option>
             <option value="center">{t('وسط', 'Center')}</option>
             <option value="left">{t('چپ', 'Left')}</option>
+          </select>
+        </label>
+        <label className="field">
+          <span>{t('تراز عمودی', 'Vertical align')}</span>
+          <select
+            value={verticalAlign}
+            onChange={(event) => setVerticalAlign(event.target.value as TextVerticalAlign)}
+          >
+            <option value="top">{t('بالا', 'Top')}</option>
+            <option value="middle">{t('وسط', 'Middle')}</option>
+            <option value="bottom">{t('پایین', 'Bottom')}</option>
           </select>
         </label>
         <label className="field">
@@ -132,7 +224,17 @@ export function TextModal({
             ))}
           </div>
         </div>
-        <div className="text-preview" dir="auto" style={{ color, fontSize: 18, textAlign: align }}>
+        <div
+          className="text-preview"
+          dir="auto"
+          style={{
+            color,
+            fontSize: Math.max(14, Math.min(38, Math.round(size * 600))),
+            textAlign: align,
+            fontWeight: textStyle.includes('bold') ? 700 : 500,
+            fontStyle: textStyle.includes('italic') ? 'italic' : 'normal',
+          }}
+        >
           {text || t('پیش‌نمایش متن', 'Text preview')}
         </div>
       </div>

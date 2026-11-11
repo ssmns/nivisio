@@ -1,75 +1,94 @@
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
-import type { Annotation, NormPoint, ReaderTool } from '../../lib/types'
+import type { CSSProperties, ReactNode, PointerEvent as ReactPointerEvent } from 'react'
+import type { Annotation, ReaderTool } from '../../lib/types'
+
+interface BoxGeometry {
+  x: number
+  y: number
+  w: number
+  h: number
+  rotation: number
+}
 
 interface TextAnnotationsProps {
   annotations: Annotation[]
+  visible: boolean
   tool: ReaderTool
   activeObjectId: string | null
-  interactive: boolean
   selectedClass: (annotation: Annotation) => string
-  moveStyle: (annotation: Annotation) => CSSProperties | undefined
-  objectDelta: NormPoint
   size: { width: number; height: number }
-  beginObjectDrag: (event: ReactPointerEvent<Element>, annotation: Annotation) => void
-  onEditText: (annotation: Annotation) => void
+  tapeGeometryFor: (annotation: Annotation) => BoxGeometry
+  boxHandles: (active: boolean) => ReactNode
+  beginTapeTransform: (
+    event: ReactPointerEvent<HTMLDivElement>,
+    annotation: Annotation,
+  ) => void
+  onEditText: (annotation: Annotation, pageAspect: number) => void
 }
 
 export function TextAnnotations({
   annotations,
+  visible,
+  tool,
   activeObjectId,
-  interactive,
   selectedClass,
-  moveStyle,
-  objectDelta,
   size,
-  beginObjectDrag,
+  tapeGeometryFor,
+  boxHandles,
+  beginTapeTransform,
   onEditText,
 }: TextAnnotationsProps) {
   const texts = annotations.filter((annotation) => annotation.type === 'text')
+  if (!visible) return null
   return (
     <>
-          {texts.map((annotation) => {
-            const rect = annotation.rects?.[0]
-            if (!rect) return null
-            return (
-              <div
-                key={annotation.id}
-                className={`text-annotation${selectedClass(annotation)}${
-                  activeObjectId === annotation.id ? ' is-object-selected' : ''
-                }`}
-                dir="auto"
-                style={{
-                  left: `${rect.x * 100}%`,
-                  top: `${rect.y * 100}%`,
-                  width: `${rect.w * 100}%`,
-                  height: `${rect.h * 100}%`,
-                  color: annotation.color,
-                  fontSize: `${(annotation.fontSize ?? 0.024) * size.width}px`,
-                  textAlign: annotation.textAlign ?? 'right',
-                  pointerEvents: interactive ? 'auto' : 'none',
-                  cursor: interactive ? 'move' : undefined,
-                  ...moveStyle(annotation),
-                  ...(activeObjectId === annotation.id &&
-                  (objectDelta.x || objectDelta.y)
-                    ? {
-                        transform: `translate(${objectDelta.x * size.width}px, ${
-                          objectDelta.y * size.height
-                        }px)`,
-                      }
-                    : {}),
-                }}
-                onPointerDown={(event) => beginObjectDrag(event, annotation)}
-                onDoubleClick={(event) => {
-                  event.stopPropagation()
-                  onEditText(annotation)
-                }}
-                title={annotation.text}
-              >
-                {annotation.text}
-              </div>
-            )
-          })}
-
+      {texts.map((annotation) => {
+        const geometry = tapeGeometryFor(annotation)
+        const isActive = tool === 'select' && activeObjectId === annotation.id
+        return (
+          <div
+            key={annotation.id}
+            className={`object-box text-annotation${selectedClass(annotation)}${
+              isActive ? ' is-object-selected' : ''
+            }`}
+            dir="auto"
+            style={
+              {
+                left: `${geometry.x * 100}%`,
+                top: `${geometry.y * 100}%`,
+                width: `${geometry.w * 100}%`,
+                height: `${geometry.h * 100}%`,
+                transform: `rotate(${geometry.rotation}deg)`,
+                color: annotation.color,
+                fontWeight: annotation.textStyle?.includes('bold') ? 700 : 500,
+                fontStyle: annotation.textStyle?.includes('italic') ? 'italic' : 'normal',
+                fontSize: `${(annotation.fontSize ?? 0.024) * size.width}px`,
+                textAlign: annotation.textAlign ?? 'right',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'stretch',
+                justifyContent:
+                  annotation.verticalAlign === 'middle'
+                    ? 'center'
+                    : annotation.verticalAlign === 'bottom'
+                      ? 'flex-end'
+                      : 'flex-start',
+                pointerEvents: tool === 'select' ? 'auto' : 'none',
+                cursor: tool === 'select' ? 'move' : undefined,
+                zIndex: isActive ? 9 : undefined,
+              } as CSSProperties
+            }
+            onPointerDown={(event) => beginTapeTransform(event, annotation)}
+            onDoubleClick={(event) => {
+              event.stopPropagation()
+              onEditText(annotation, size.height / Math.max(1, size.width))
+            }}
+            title={annotation.text}
+          >
+            {annotation.text}
+            {boxHandles(isActive)}
+          </div>
+        )
+      })}
     </>
   )
 }

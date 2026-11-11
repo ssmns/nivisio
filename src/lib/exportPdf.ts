@@ -13,6 +13,7 @@ import type {
   PenStyle,
 } from './types'
 import { blobToBase64, pressureWidth, strokeDash } from './utils'
+import { wrapText } from './wrapText'
 
 const RENDER_WIDTH = 1100
 
@@ -178,32 +179,6 @@ function roundedRect(
   ctx.closePath()
 }
 
-function wrapText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  maxLines: number,
-): string[] {
-  const words = text.replace(/\s+/g, ' ').trim().split(' ')
-  const lines: string[] = []
-  let current = ''
-  for (const word of words) {
-    const candidate = current ? `${current} ${word}` : word
-    if (ctx.measureText(candidate).width > maxWidth && current) {
-      lines.push(current)
-      current = word
-      if (lines.length === maxLines) break
-    } else {
-      current = candidate
-    }
-  }
-  if (current && lines.length < maxLines) lines.push(current)
-  if (lines.length === maxLines && words.join(' ').length > lines.join(' ').length) {
-    lines[maxLines - 1] = `${lines[maxLines - 1].slice(0, Math.max(0, lines[maxLines - 1].length - 1))}…`
-  }
-  return lines
-}
-
 async function drawAnnotation(
   ctx: CanvasRenderingContext2D,
   annotation: Annotation,
@@ -333,15 +308,27 @@ async function drawAnnotation(
     const r = rectPx(rect)
     const fontSize = (annotation.fontSize ?? 0.024) * width
     ctx.save()
+    ctx.translate(r.x + r.w / 2, r.y + r.h / 2)
+    ctx.rotate(((annotation.rotation ?? 0) * Math.PI) / 180)
     ctx.fillStyle = annotation.color
-    ctx.font = `600 ${fontSize}px Vazirmatn, Tahoma, sans-serif`
+    const bold = annotation.textStyle?.includes('bold') ? 700 : 500
+    const italic = annotation.textStyle?.includes('italic') ? 'italic ' : ''
+    ctx.font = `${italic}${bold} ${fontSize}px Vazirmatn, Tahoma, sans-serif`
     ctx.direction = /[\u0600-\u06FF]/.test(annotation.text) ? 'rtl' : 'ltr'
     const align = annotation.textAlign ?? 'right'
     ctx.textAlign = align
-    const x = align === 'right' ? r.x + r.w - 4 : align === 'center' ? r.x + r.w / 2 : r.x + 4
+    const x = align === 'right' ? r.w / 2 - 4 : align === 'center' ? 0 : -r.w / 2 + 4
     const lines = wrapText(ctx, annotation.text, r.w - 8, 30)
+    const totalHeight = lines.length * fontSize * 1.6
+    const vertical = annotation.verticalAlign ?? 'top'
+    const firstBaseline =
+      vertical === 'middle'
+        ? -totalHeight / 2 + fontSize * 1.1
+        : vertical === 'bottom'
+          ? r.h / 2 - totalHeight + fontSize * 1.1
+          : -r.h / 2 + fontSize * 1.1
     lines.forEach((line, index) => {
-      ctx.fillText(line, x, r.y + fontSize * 1.35 + index * fontSize * 1.6)
+      ctx.fillText(line, x, firstBaseline + index * fontSize * 1.6)
     })
     ctx.restore()
     return

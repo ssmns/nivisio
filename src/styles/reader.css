@@ -409,7 +409,6 @@
   background: color-mix(in srgb, var(--surface) 94%, transparent);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-md);
-  backdrop-filter: blur(10px);
   z-index: 8;
 }
 .page-input {
@@ -532,7 +531,7 @@
   width: 100%;
   min-height: 300px;
   display: flex;
-  justify-content: center;
+  justify-content: safe center;
 }
 .pdf-page {
   position: relative;
@@ -694,7 +693,8 @@
   gap: 7px;
   flex-wrap: wrap;
 }
-.doc-info__setup-row label {
+.doc-info__setup-row label,
+.doc-info__setup-row .doc-info__setup-item {
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -716,4 +716,38 @@
 }
 .doc-info__setup-row .btn {
   flex: none;
+}
+
+
+/* Bottom dock: zoom and view controls */
+.page-dock__zoom {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--surface-3);
+}
+.page-dock__zoom .icon-btn {
+  width: 26px;
+  height: 26px;
+}
+.page-dock__zoom .zoom-value {
+  min-width: 38px;
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+.page-dock .view-menu__trigger {
+  height: 30px;
+  padding: 0 8px;
+  font-size: 10.5px;
+}
+.page-dock .view-popover {
+  top: auto;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  right: auto;
+  inset-inline: auto;
+  transform: translateX(-50%);
 }

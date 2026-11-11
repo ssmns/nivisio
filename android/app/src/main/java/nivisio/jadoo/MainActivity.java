@@ -1,4 +1,4 @@
-package ir.nivisio.app;
+package nivisio.jadoo;
 
 import com.getcapacitor.BridgeActivity;
 

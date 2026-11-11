@@ -30,30 +30,14 @@ import {
   pointInPolygon,
   rectCenter,
 } from '../lib/utils'
-import { snapPointToGrid } from '../lib/snap'
+import { snapPointWithGuides } from '../lib/pageSnap'
+import type { TapeDrag, TapeGeometry } from './page/transformTypes'
 import { translate } from '../lib/lang'
 
 interface SelectionPayload {
   rects: NormRect[]
   text: string
   anchor: { x: number; y: number }
-}
-
-interface TapeGeometry {
-  x: number
-  y: number
-  w: number
-  h: number
-  rotation: number
-}
-
-interface TapeDrag {
-  id: string
-  handle: string
-  startX: number
-  startY: number
-  geometry: TapeGeometry
-  box: DOMRect
 }
 
 export interface PageViewProps {
@@ -72,6 +56,7 @@ export interface PageViewProps {
   fitMode?: 'width' | 'height'
   viewportHeight?: number
   readingTheme?: 'normal' | 'dim' | 'dark'
+  showText?: boolean
   selectedIds: string[]
   activeObjectId: string | null
   annotations: Annotation[]
@@ -82,8 +67,8 @@ export interface PageViewProps {
   onErase: (annotation: Annotation) => void
   onAddLink: (rect: NormRect) => void
   onAddTape: (rect: NormRect) => void
-  onAddText: (point: NormPoint) => void
-  onEditText: (annotation: Annotation) => void
+  onAddText: (point: NormPoint, pageAspect: number) => void
+  onEditText: (annotation: Annotation, pageAspect: number) => void
   onLassoSelect: (ids: string[]) => void
   onMoveSelected: (delta: NormPoint) => void
   onMoveAnnotation: (id: string, delta: NormPoint) => void
@@ -91,7 +76,7 @@ export interface PageViewProps {
   onUpdateAnnotation: (id: string, patch: Partial<Annotation>) => void
   onPlaceObject: (point: NormPoint, pageAspect: number) => void
   onAddShape: (rect: NormRect, flips: { flipX: boolean; flipY: boolean }) => void
-  onAddGuide: (point: NormPoint) => void
+  onAddGuide: (point: NormPoint, pageAspect: number) => void
   pendingShape?: ShapeConfig | null
   snapEnabled?: boolean
   onOpenLink: (annotation: Annotation) => void
@@ -116,6 +101,7 @@ export function PdfPage({
   fitMode = 'width',
   viewportHeight,
   readingTheme = 'normal',
+  showText = true,
   selectedIds,
   activeObjectId,
   annotations,
@@ -146,6 +132,7 @@ export function PdfPage({
   const textLayerRef = useRef<HTMLDivElement>(null)
   const [availableWidth, setAvailableWidth] = useState(0)
   const [size, setSize] = useState({ width: 0, height: 0 })
+  const [pagePoints, setPagePoints] = useState({ width: 595, height: 842 })
   const [rendering, setRendering] = useState(true)
   const [draft, setDraft] = useState<NormPoint[]>([])
   const [draftPressures, setDraftPressures] = useState<number[]>([])
@@ -167,6 +154,7 @@ export function PdfPage({
   const lassoRef = useRef<NormPoint[]>([])
   const moveStartRef = useRef<NormPoint | null>(null)
   const objectDragRef = useRef<{ id: string; start: NormPoint } | null>(null)
+  const objectDragMovedRef = useRef(false)
   const eraseRef = useRef(false)
   const erasedIdsRef = useRef<Set<string>>(new Set())
   const boxDragCleanupRef = useRef<(() => void) | null>(null)
@@ -210,16 +198,18 @@ export function PdfPage({
       viewportHeight ??
       (hostRef.current?.closest('.reader__stage') as HTMLElement | null)?.clientHeight ??
       0
-    const heightTarget = stageHeight > 0 ? stageHeight - 170 : 0
+    const heightTarget = stageHeight > 0 ? Math.max(180, stageHeight - 110) : 0
 
     if (isNotebook) {
       const fitWidth = Math.max(220, availableWidth - 28)
       const baseWidth = notebookSize?.width ?? NOTEBOOK_WIDTH
       const baseHeight = notebookSize?.height ?? NOTEBOOK_HEIGHT
+      const widthScale = fitWidth / baseWidth
       const fitScale =
         fitMode === 'height' && heightTarget > 100
           ? Math.min((heightTarget - 20) / baseHeight, 2.5)
-          : Math.min(fitWidth / baseWidth, 1.8)
+          : Math.min(widthScale, 1.8)
+      setPagePoints({ width: baseWidth, height: baseHeight })
       setSize({
         width: baseWidth * fitScale * zoom,
         height: baseHeight * fitScale * zoom,
@@ -241,11 +231,13 @@ export function PdfPage({
         if (cancelled) return
 
         const base = page.getViewport({ scale: 1 })
+        setPagePoints({ width: base.width, height: base.height })
         const fitWidth = Math.max(220, availableWidth - 28)
+        const widthScale = fitWidth / base.width
         const fitScale =
           fitMode === 'height' && heightTarget > 100
             ? Math.min((heightTarget - 20) / base.height, 2.5)
-            : Math.min(fitWidth / base.width, 1.8)
+            : Math.min(widthScale, 1.8)
         const viewport = page.getViewport({ scale: fitScale * zoom })
         const canvas = canvasRef.current
         const textLayerDiv = textLayerRef.current
@@ -321,33 +313,17 @@ export function PdfPage({
     }
   }
 
-  const snapPoint = (point: NormPoint): NormPoint => {
-    if (!snapEnabled) return point
-    let snapped = isNotebook
-      ? snapPointToGrid(point, {
-          grid: notebook?.grid,
-          gridScale: notebook?.gridScale,
-          width: size.width || NOTEBOOK_WIDTH,
-          height: size.height || NOTEBOOK_HEIGHT,
-        })
-      : {
-          x: Math.round(point.x / 0.05) * 0.05,
-          y: Math.round(point.y / 0.05) * 0.05,
-        }
-    // Rulers and set squares act as extra snap edges in every grid mode.
-    const tolerance = 0.012
-    for (const guide of annotations.filter((item) => item.type === 'guide')) {
-      const rect = guide.rects?.[0]
-      if (!rect) continue
-      for (const edge of [rect.x, rect.x + rect.w]) {
-        if (Math.abs(snapped.x - edge) < tolerance) snapped = { ...snapped, x: edge }
-      }
-      for (const edge of [rect.y, rect.y + rect.h]) {
-        if (Math.abs(snapped.y - edge) < tolerance) snapped = { ...snapped, y: edge }
-      }
-    }
-    return snapped
-  }
+  const snapPoint = (point: NormPoint, anchor?: NormPoint | null): NormPoint =>
+    snapPointWithGuides(point, {
+      enabled: snapEnabled,
+      isNotebook,
+      grid: notebook?.grid,
+      gridScale: notebook?.gridScale,
+      width: size.width || NOTEBOOK_WIDTH,
+      height: size.height || NOTEBOOK_HEIGHT,
+      anchor,
+      annotations,
+    })
 
   const captureSelection = () => {
     if (isNotebook || (tool !== 'select' && tool !== 'highlight')) return
@@ -409,9 +385,9 @@ export function PdfPage({
     if (!drawingRef.current) return
     const point = pointFromClient(event.clientX, event.clientY)
     if (!point) return
-    const snapped = snapPoint(point)
     const current = draftPointsRef.current
     const last = current[current.length - 1]
+    const snapped = snapPoint(point, last)
     if (last && Math.hypot(last.x - snapped.x, last.y - snapped.y) < 0.0012) return
     current.push(snapped)
     draftPressuresRef.current.push(pressureOf(event))
@@ -624,8 +600,22 @@ export function PdfPage({
       const localY = -dxPx * sin + dyPx * cos
       const edgeX = drag.handle.includes('e') ? 1 : drag.handle.includes('w') ? -1 : 0
       const edgeY = drag.handle.includes('s') ? 1 : drag.handle.includes('n') ? -1 : 0
-      const newW = clamp(geometry.w + (edgeX * localX) / box.width, 0.02, 3)
-      const newH = clamp(geometry.h + (edgeY * localY) / box.height, 0.015, 3)
+      let newW = clamp(geometry.w + (edgeX * localX) / box.width, 0.02, 3)
+      let newH = clamp(geometry.h + (edgeY * localY) / box.height, 0.015, 3)
+      const guideKind = annotations.find((item) => item.id === drag.id)?.guide?.kind
+      const physicalRatio =
+        guideKind === 'protractor' ? 2 : guideKind === 'triangle' ? Math.sqrt(3) : null
+      const pageAspect = box.height / Math.max(1, box.width)
+      const guideRatio = physicalRatio ? physicalRatio * pageAspect : null
+      if (guideRatio) {
+        if (drag.handle.includes('e') || drag.handle.includes('w')) {
+          newH = newW / guideRatio
+        } else if (drag.handle.includes('n') || drag.handle.includes('s')) {
+          newW = newH * guideRatio
+        }
+        newW = clamp(newW, 0.06, 2)
+        newH = clamp(newH, 0.03, 2)
+      }
       const deltaW = (newW - geometry.w) * box.width
       const deltaH = (newH - geometry.h) * box.height
       const shiftLocalX = (edgeX * deltaW) / 2
@@ -665,10 +655,20 @@ export function PdfPage({
       Math.abs(next.h - previous.h) > 0.0005 ||
       Math.abs(next.rotation - previous.rotation) > 0.1
     if (!changed) return
-    onUpdateAnnotation(drag.id, {
+    const patch: Partial<Annotation> = {
       rects: [{ x: next.x, y: next.y, w: next.w, h: next.h }],
       rotation: next.rotation,
-    })
+    }
+    const target = annotations.find((annotation) => annotation.id === drag.id)
+    if (target?.type === 'text' && drag.geometry.w > 0.01) {
+      const scale = next.w / drag.geometry.w
+      patch.fontSize = clamp(
+        (target.fontSize ?? 0.024) * scale,
+        0.008,
+        0.24,
+      )
+    }
+    onUpdateAnnotation(drag.id, patch)
   }
 
   const beginShape = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -686,7 +686,7 @@ export function PdfPage({
     if (!start) return
     const point = pointFromClient(event.clientX, event.clientY)
     if (!point) return
-    let end = snapPoint(point)
+    let end = snapPoint(point, start)
     if (
       event.shiftKey &&
       pendingShape &&
@@ -714,7 +714,7 @@ export function PdfPage({
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
     const point = pointFromClient(event.clientX, event.clientY)
-    const end = point ? snapPoint(point) : start
+    const end = point ? snapPoint(point, start) : start
     setShapeDraft(null)
     const rect = {
       x: Math.min(start.x, end.x),
@@ -828,13 +828,18 @@ export function PdfPage({
     const point = pointFromClient(event.clientX, event.clientY)
     if (!point) return
     objectDragRef.current = { id: annotation.id, start: point }
+    objectDragMovedRef.current = false
     setObjectDelta({ x: 0, y: 0 })
     const move = (pointerEvent: PointerEvent) => {
       const drag = objectDragRef.current
       if (!drag) return
       const current = pointFromClient(pointerEvent.clientX, pointerEvent.clientY)
       if (!current) return
-      setObjectDelta({ x: current.x - drag.start.x, y: current.y - drag.start.y })
+      const delta = { x: current.x - drag.start.x, y: current.y - drag.start.y }
+      if (Math.abs(delta.x) > 0.0015 || Math.abs(delta.y) > 0.0015) {
+        objectDragMovedRef.current = true
+      }
+      setObjectDelta(delta)
     }
     const finish = (pointerEvent: PointerEvent) => {
       commitObjectDrag(pointerEvent.clientX, pointerEvent.clientY)
@@ -906,7 +911,7 @@ export function PdfPage({
       return
     }
     if (tool === 'text') {
-      onAddText(point)
+      onAddText(point, size.height / Math.max(1, size.width))
       return
     }
     if (tool === 'image' || tool === 'chart') {
@@ -914,7 +919,7 @@ export function PdfPage({
       return
     }
     if (tool === 'guide') {
-      onAddGuide(snapPoint(point))
+      onAddGuide(snapPoint(point), size.height / Math.max(1, size.width))
     }
   }
 
@@ -1018,6 +1023,7 @@ export function PdfPage({
 
           <ObjectLayer
             annotations={annotations}
+            showCaptions={showText}
             tool={tool}
             activeObjectId={activeObjectId}
             selectedClass={selectedClass}
@@ -1029,14 +1035,14 @@ export function PdfPage({
 
           <TextAnnotations
             annotations={annotations}
+            visible={showText}
             tool={tool}
             activeObjectId={activeObjectId}
-            interactive={interactive}
             selectedClass={selectedClass}
-            moveStyle={moveStyle}
-            objectDelta={objectDelta}
             size={size}
-            beginObjectDrag={beginObjectDrag}
+            tapeGeometryFor={tapeGeometryFor}
+            boxHandles={boxHandles}
+            beginTapeTransform={beginTapeTransform}
             onEditText={onEditText}
           />
 
@@ -1060,10 +1066,13 @@ export function PdfPage({
             tapeGeometryFor={tapeGeometryFor}
             boxHandles={boxHandles}
             beginTapeTransform={beginTapeTransform}
+            pageSize={size}
+            pagePoints={pagePoints}
           />
 
           <LinkNoteLayer
             annotations={annotations}
+            showText={showText}
             interactive={interactive}
             activeObjectId={activeObjectId}
             selectedClass={selectedClass}
@@ -1072,7 +1081,14 @@ export function PdfPage({
             moveDelta={moveDelta}
             size={size}
             onOpenLink={onOpenLink}
-            onOpenAnnotation={onOpenAnnotation}
+            onOpenAnnotation={(annotation) => {
+              if (objectDragMovedRef.current) {
+                objectDragMovedRef.current = false
+                return
+              }
+              onOpenAnnotation(annotation)
+            }}
+            beginObjectDrag={beginObjectDrag}
             linkDraft={linkDraft}
             tapeDraft={tapeDraft}
             tapeColor={tapeColor}

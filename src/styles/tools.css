@@ -152,6 +152,10 @@
 }
 .pen-widths button {
   height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   border: 1px solid var(--line);
   border-radius: 7px;
   background: var(--surface-2);
@@ -176,11 +180,32 @@
 .marker-widths button {
   height: 26px;
   padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   border: 0;
   border-radius: 6px;
   background: transparent;
   color: var(--muted);
   font-size: 10px;
+}
+.stroke-width-icon {
+  width: 18px;
+  height: 8px;
+  position: relative;
+  display: inline-block;
+  flex: none;
+}
+.stroke-width-icon::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: var(--stroke-width, 2px);
+  border-radius: 99px;
+  background: currentColor;
 }
 .marker-widths button.is-active {
   background: var(--accent-soft);
@@ -323,6 +348,9 @@
 
 .text-annotation {
   position: absolute;
+  display: block;
+  align-items: initial;
+  justify-content: initial;
   z-index: 4;
   padding: 2px 4px;
   border-radius: 3px;

@@ -12,8 +12,11 @@ import {
   type PenStyle,
   type ReaderTool,
   type TextAlign,
+  type TextVerticalAlign,
+  type TextStyle,
 } from '../lib/types'
 import { clamp, makeRectCentered, toFa } from '../lib/utils'
+import { measureTextBox } from '../lib/textLayout'
 import { useI18n } from '../lib/i18n'
 
 interface ReaderActionsOptions {
@@ -40,6 +43,8 @@ export interface TextValue {
   fontSize: number
   color: string
   textAlign: TextAlign
+  verticalAlign: TextVerticalAlign
+  textStyle: TextStyle
   category: string
 }
 
@@ -138,27 +143,57 @@ export function useReaderActions({
   )
 
   const saveText = useCallback(
-    async (value: TextValue, target: { annotation?: Annotation; point?: NormPoint }) => {
+    async (
+      value: TextValue,
+      target: { annotation?: Annotation; point?: NormPoint; pageAspect?: number },
+    ) => {
+      const aspect = target.pageAspect ?? 1.414
+      const box = measureTextBox(value.text, value.fontSize, aspect, value.textStyle)
       if (target.annotation) {
+        const current = target.annotation.rects?.[0]
+        const center = current
+          ? { x: current.x + current.w / 2, y: current.y + current.h / 2 }
+          : null
         await updateAnnotation(target.annotation.id, {
           text: value.text,
           fontSize: value.fontSize,
           color: value.color,
           textAlign: value.textAlign,
+          verticalAlign: value.verticalAlign,
+          textStyle: value.textStyle,
           category: value.category,
+          ...(center
+            ? {
+                rects: [
+                  {
+                    x: center.x - box.width / 2,
+                    y: center.y - box.height / 2,
+                    w: box.width,
+                    h: box.height,
+                  },
+                ],
+              }
+            : {}),
         })
         toast.show(t('متن ویرایش شد.', 'Text updated.'), { tone: 'success' })
         return
       }
       if (!target.point) return
-      const lines = value.text.split('\n').length + Math.floor(value.text.length / 42)
-      const height = clamp(value.fontSize * 1.85 * Math.max(1, lines) + 0.02, 0.06, 0.7)
       const annotation = base('text', value.color, {
         text: value.text,
         fontSize: value.fontSize,
         textAlign: value.textAlign,
+        verticalAlign: value.verticalAlign,
+        textStyle: value.textStyle,
         category: value.category,
-        rects: [makeRectCentered(target.point, 0.56, height)],
+        rects: [
+          {
+            x: target.point.x - box.width / 2,
+            y: target.point.y - box.height / 2,
+            w: box.width,
+            h: box.height,
+          },
+        ],
       })
       if (!annotation) return
       await db.annotations.add(annotation)

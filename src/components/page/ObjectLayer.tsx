@@ -13,6 +13,7 @@ interface BoxGeometry {
 
 interface ObjectLayerProps {
   annotations: Annotation[]
+  showCaptions: boolean
   tool: ReaderTool
   activeObjectId: string | null
   selectedClass: (annotation: Annotation) => string
@@ -27,6 +28,7 @@ interface ObjectLayerProps {
 
 export function ObjectLayer({
   annotations,
+  showCaptions,
   tool,
   activeObjectId,
   selectedClass,
@@ -63,7 +65,7 @@ export function ObjectLayer({
                 onPointerDown={(event) => beginTapeTransform(event, annotation)}
               >
                 <img src={annotation.image} alt={annotation.note || translate('تصویر', 'Image')} draggable={false} />
-                {annotation.note && (
+                {showCaptions && annotation.note && (
                   <span className="object-caption" dir="auto">
                     {annotation.note}
                   </span>

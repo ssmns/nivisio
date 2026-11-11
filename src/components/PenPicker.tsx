@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronDown, Highlighter, PenLine } from 'lucide-react'
 import { PEN_MODELS, PEN_WIDTHS, type PenStyle } from '../lib/types'
 import { useI18n } from '../lib/i18n'
+import { StrokeWidthIcon } from './StrokeWidthIcon'
 
 interface PenPickerProps {
   value: PenStyle
@@ -70,7 +71,8 @@ export function PenPicker({ value, widthScale, onChange, onWidthChange }: PenPic
                 className={widthScale === width.value ? 'is-active' : ''}
                 onClick={() => onWidthChange(width.value)}
               >
-                {lang === 'en' ? width.nameEn : width.name}
+                <StrokeWidthIcon scale={width.value} />
+                <span>{lang === 'en' ? width.nameEn : width.name}</span>
               </button>
             ))}
           </div>

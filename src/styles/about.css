@@ -564,6 +564,12 @@
   color: var(--ink-soft);
 }
 
+@media (max-width: 1180px) {
+  .about-features {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 1000px) {
   .about-hero {
     grid-template-columns: 1fr;
@@ -599,7 +605,26 @@
   .about__nav-actions .btn--primary span {
     display: none;
   }
-  .about-features,
+  .about-features {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .about-feature {
+    padding: 12px;
+  }
+  .about-feature__icon {
+    width: 32px;
+    height: 32px;
+  }
+  .about-feature h3 {
+    margin-top: 8px;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .about-feature p {
+    font-size: 9.8px;
+    line-height: 1.75;
+  }
   .about-steps,
   .about-dev-grid,
   .about-roadmap__grid,

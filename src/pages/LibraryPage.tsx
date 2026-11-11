@@ -1,10 +1,13 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useNavigate } from 'react-router-dom'
 import {
   BookOpen,
   FileText,
   FolderOpen,
+  Grid3X3,
+  LayoutGrid,
+  List,
   Menu,
   NotebookPen,
   Plus,
@@ -29,6 +32,7 @@ import { ConfirmDialog } from '../components/Modal'
 import { useToast } from '../components/Toast'
 
 type SortMode = 'recent' | 'added' | 'title' | 'progress'
+type LibraryView = 'large' | 'compact' | 'list'
 
 const FILTER_TITLES: Record<StatusFilter, { fa: string; en: string }> = {
   all: { fa: 'همه اسناد', en: 'All documents' },
@@ -59,6 +63,10 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
   const [activeTag, setActiveTag] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<SortMode>('recent')
+  const [viewMode, setViewMode] = useState<LibraryView>(() => {
+    const stored = localStorage.getItem('bnote-library-view')
+    return stored === 'compact' || stored === 'list' ? stored : 'large'
+  })
   const [dragging, setDragging] = useState(false)
   const [importing, setImporting] = useState<{ done: number; total: number } | null>(null)
   const [editing, setEditing] = useState<BnoteDocument | null>(null)
@@ -66,6 +74,10 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
   const [collectionModal, setCollectionModal] = useState(false)
   const [noteModal, setNoteModal] = useState(false)
   const [deletingCollection, setDeletingCollection] = useState<Collection | null>(null)
+
+  useEffect(() => {
+    localStorage.setItem('bnote-library-view', viewMode)
+  }, [viewMode])
 
   const annotationCounts = useMemo(() => {
     const map = new Map<string, number>()
@@ -300,6 +312,29 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
             )}
           </label>
           <div className="library__topbar-actions">
+            <div
+              className="view-switch"
+              role="group"
+              aria-label={t('حالت نمایش کتابخانه', 'Library view')}
+            >
+              {[
+                { id: 'large' as const, icon: LayoutGrid, label: t('کارت بزرگ', 'Large cards') },
+                { id: 'compact' as const, icon: Grid3X3, label: t('کارت کوچک', 'Compact cards') },
+                { id: 'list' as const, icon: List, label: t('لیست', 'List') },
+              ].map(({ id, icon: Icon, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={viewMode === id ? 'is-active' : ''}
+                  onClick={() => setViewMode(id)}
+                  title={label}
+                  aria-label={label}
+                  aria-pressed={viewMode === id}
+                >
+                  <Icon size={16} />
+                </button>
+              ))}
+            </div>
             <label className="sort-select">
               <span>{t('مرتب‌سازی', 'Sort')}</span>
               <select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}>
@@ -448,7 +483,7 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
               )}
             </section>
           ) : (
-            <div className="doc-grid">
+            <div className={`doc-grid doc-grid--${viewMode}`}>
               {visibleDocs.map((doc) => (
                 <DocumentCard
                   key={doc.id}

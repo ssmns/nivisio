@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BookOpen, Download } from 'lucide-react'
+import { OrientationPicker } from '../OrientationPicker'
+import { PageSizePicker } from '../PageSizePicker'
 import {
   PAGE_SIZES,
   type BnoteDocument,
@@ -167,39 +169,26 @@ export function ReaderInfoPanel({
         <div className="doc-info__setup">
           <span className="doc-info__setup-title">{t('تنظیم اندازه صفحه', 'Page setup')}</span>
           <div className="doc-info__setup-row">
-            <label>
+            <div className="doc-info__setup-item">
               <span>{t('اندازه', 'Size')}</span>
-              <select
+              <PageSizePicker
+                compact
                 value={doc.pageSize ?? 'a4'}
-                onChange={(event) =>
-                  applyPageSize(
-                    event.target.value as PageSizeKey,
-                    doc.pageOrientation ?? 'portrait',
-                  )
+                onChange={(next) =>
+                  applyPageSize(next, doc.pageOrientation ?? 'portrait')
                 }
-              >
-                {(Object.keys(PAGE_SIZES) as PageSizeKey[]).map((key) => (
-                  <option key={key} value={key}>
-                    {lang === 'en' ? PAGE_SIZES[key].nameEn : PAGE_SIZES[key].name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
+              />
+            </div>
+          </div>
+          <div className="doc-info__setup-row">
+            <div className="doc-info__setup-item">
               <span>{t('جهت', 'Orientation')}</span>
-              <select
+              <OrientationPicker
+                compact
                 value={doc.pageOrientation ?? 'portrait'}
-                onChange={(event) =>
-                  applyPageSize(
-                    doc.pageSize ?? 'a4',
-                    event.target.value as PageOrientation,
-                  )
-                }
-              >
-                <option value="portrait">{t('عمودی', 'Portrait')}</option>
-                <option value="landscape">{t('افقی', 'Landscape')}</option>
-              </select>
-            </label>
+                onChange={(next) => applyPageSize(doc.pageSize ?? 'a4', next)}
+              />
+            </div>
           </div>
           {doc.pageSize === 'custom' && (
             <div className="doc-info__setup-row">

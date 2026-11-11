@@ -11,6 +11,8 @@ import type {
 import { PAGE_SIZES } from '../lib/types'
 import { formatBytes, toFa } from '../lib/utils'
 import { CoverPicker } from './CoverPicker'
+import { OrientationPicker } from './OrientationPicker'
+import { PageSizePicker } from './PageSizePicker'
 import { Modal } from './Modal'
 import { useToast } from './Toast'
 import { useI18n } from '../lib/i18n'
@@ -177,29 +179,14 @@ export function DocumentEditor({ doc, collections, open, onClose }: DocumentEdit
             </label>
             {doc.kind === 'note' && (
               <>
-                <label className="field">
+                <div className="field field--full">
                   <span>{t('اندازه صفحه', 'Page size')}</span>
-                  <select
-                    value={pageSize}
-                    onChange={(event) => setPageSize(event.target.value as PageSizeKey)}
-                  >
-                    {(Object.keys(PAGE_SIZES) as PageSizeKey[]).map((key) => (
-                      <option key={key} value={key}>
-                        {lang === 'en' ? PAGE_SIZES[key].nameEn : PAGE_SIZES[key].name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="field">
+                  <PageSizePicker value={pageSize} onChange={setPageSize} />
+                </div>
+                <div className="field">
                   <span>{t('جهت', 'Orientation')}</span>
-                  <select
-                    value={orientation}
-                    onChange={(event) => setOrientation(event.target.value as PageOrientation)}
-                  >
-                    <option value="portrait">{t('عمودی', 'Portrait')}</option>
-                    <option value="landscape">{t('افقی', 'Landscape')}</option>
-                  </select>
-                </label>
+                  <OrientationPicker value={orientation} onChange={setOrientation} />
+                </div>
                 {pageSize === 'custom' && (
                   <>
                     <label className="field">

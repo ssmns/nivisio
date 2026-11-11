@@ -108,7 +108,11 @@ export function annotationLabel(a: Annotation): string {
   if (a.type === 'tape') return en ? 'Tape' : 'نوار چسب'
   if (a.type === 'text') return en ? 'Text' : 'متن'
   if (a.type === 'shape') return en ? 'Shape' : 'شکل'
-  if (a.type === 'guide') return en ? 'Guide' : 'ابزار اندازه'
+  if (a.type === 'guide') {
+    if (a.guide?.kind === 'ruler') return en ? 'Ruler' : 'خط‌کش'
+    if (a.guide?.kind === 'protractor') return en ? 'Protractor' : 'نقاله'
+    return en ? 'Set square' : 'گونیا'
+  }
   return en ? 'Note' : 'یادداشت'
 }
 

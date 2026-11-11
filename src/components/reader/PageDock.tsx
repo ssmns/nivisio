@@ -5,9 +5,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Circle,
+  Maximize2,
+  Minus,
+  Plus,
 } from 'lucide-react'
+import type { FitMode, ReaderTheme, ViewMode } from '../../lib/types'
 import { toFa } from '../../lib/utils'
 import { useI18n } from '../../lib/i18n'
+import { ViewMenu } from '../ViewMenu'
 
 interface PageDockProps {
   pageInput: string
@@ -18,6 +23,17 @@ interface PageDockProps {
   pagePercent: number
   isRead: boolean
   isBookmarked: boolean
+  zoom: number
+  effectiveFitMode: FitMode
+  viewMode: ViewMode
+  fitMode: FitMode
+  readingTheme: ReaderTheme
+  onZoom: (zoom: number) => void
+  onViewMode: (mode: ViewMode) => void
+  onFitMode: (mode: FitMode) => void
+  onReadingTheme: (theme: ReaderTheme) => void
+  showText: boolean
+  onShowText: (show: boolean) => void
   onPageInput: (value: string) => void
   onSubmitPage: () => void
   onPrev: () => void
@@ -35,6 +51,17 @@ export function PageDock({
   pagePercent,
   isRead,
   isBookmarked,
+  zoom,
+  effectiveFitMode,
+  viewMode,
+  fitMode,
+  readingTheme,
+  onZoom,
+  onViewMode,
+  onFitMode,
+  onReadingTheme,
+  showText,
+  onShowText,
   onPageInput,
   onSubmitPage,
   onPrev,
@@ -42,7 +69,7 @@ export function PageDock({
   onToggleRead,
   onToggleBookmark,
 }: PageDockProps) {
-  const { isRtl, t } = useI18n()
+  const { isRtl, lang, t } = useI18n()
   return (
     <div className="page-dock">
       <button
@@ -78,6 +105,51 @@ export function PageDock({
       >
         {isRtl ? <ChevronLeft size={19} /> : <ChevronRight size={19} />}
       </button>
+      <span className="page-dock__zoom" role="group" aria-label={t('بزرگ‌نمایی', 'Zoom')}>
+        <button
+          type="button"
+          className="icon-btn icon-btn--xs"
+          onClick={() => onZoom(Math.max(0.6, zoom - 0.15))}
+          title={t('کوچک‌تر', 'Zoom out')}
+          aria-label={t('کوچک‌تر', 'Zoom out')}
+        >
+          <Minus size={13} />
+        </button>
+        <span className="zoom-value">
+          {toFa(Math.round(zoom * 100))}
+          {lang === 'en' ? '%' : '٪'}
+        </span>
+        <button
+          type="button"
+          className="icon-btn icon-btn--xs"
+          onClick={() => onZoom(Math.min(2.4, zoom + 0.15))}
+          title={t('بزرگ‌تر', 'Zoom in')}
+          aria-label={t('بزرگ‌تر', 'Zoom in')}
+        >
+          <Plus size={13} />
+        </button>
+        <button
+          type="button"
+          className={`icon-btn icon-btn--xs${zoom === 1 ? ' is-active' : ''}`}
+          onClick={() => onZoom(1)}
+          title={effectiveFitMode === 'height' ? t('تناسب با ارتفاع', 'Fit height') : t('تناسب با عرض', 'Fit width')}
+          aria-label={effectiveFitMode === 'height' ? t('تناسب با ارتفاع', 'Fit height') : t('تناسب با عرض', 'Fit width')}
+        >
+          <Maximize2 size={13} />
+        </button>
+      </span>
+
+      <ViewMenu
+        viewMode={viewMode}
+        fitMode={fitMode}
+        readingTheme={readingTheme}
+        onViewMode={onViewMode}
+        onFitMode={onFitMode}
+        onReadingTheme={onReadingTheme}
+        showText={showText}
+        onShowText={onShowText}
+      />
+
       <span className="page-dock__label">{pageLabel}</span>
       <button
         type="button"

@@ -1,3 +1,4 @@
+import { useEffect, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import {
   Bandage,
   Magnet,
@@ -7,27 +8,22 @@ import {
   Highlighter,
   Lasso,
   LayoutGrid,
-  Minus,
   MousePointer2,
   Pencil,
   PenLine,
-  Plus,
   Type,
-  Maximize2,
+  SlidersHorizontal,
 } from 'lucide-react'
 import { InsertMenu } from '../InsertMenu'
 import { PenPicker } from '../PenPicker'
-import { ViewMenu } from '../ViewMenu'
+import { StrokeWidthIcon } from '../StrokeWidthIcon'
 import {
   ANNOTATION_CATEGORIES,
   PEN_WIDTHS,
-  type FitMode,
   type PenStyle,
-  type ReaderTheme,
   type ReaderTool,
-  type ViewMode,
 } from '../../lib/types'
-import { categoryLabel, toFa } from '../../lib/utils'
+import { categoryLabel } from '../../lib/utils'
 import { useI18n } from '../../lib/i18n'
 
 interface PaletteColor {
@@ -43,11 +39,6 @@ interface ReaderToolbarProps {
   activeColor: string
   palette: readonly PaletteColor[]
   category: string
-  zoom: number
-  fitMode: FitMode
-  effectiveFitMode: FitMode
-  viewMode: ViewMode
-  readingTheme: ReaderTheme
   notebookPage: boolean
   notebookGridName?: string
   onSelectTool: (tool: ReaderTool) => void
@@ -55,10 +46,6 @@ interface ReaderToolbarProps {
   onPenWidth: (scale: number) => void
   onColor: (color: string) => void
   onCategory: (category: string) => void
-  onZoom: (zoom: number) => void
-  onViewMode: (mode: ViewMode) => void
-  onFitMode: (mode: FitMode) => void
-  onReadingTheme: (theme: ReaderTheme) => void
   onImage: () => void
   onChart: () => void
   onLink: () => void
@@ -78,11 +65,6 @@ export function ReaderToolbar({
   activeColor,
   palette,
   category,
-  zoom,
-  fitMode,
-  effectiveFitMode,
-  viewMode,
-  readingTheme,
   notebookPage,
   notebookGridName,
   onSelectTool,
@@ -90,10 +72,6 @@ export function ReaderToolbar({
   onPenWidth,
   onColor,
   onCategory,
-  onZoom,
-  onViewMode,
-  onFitMode,
-  onReadingTheme,
   onImage,
   onChart,
   onLink,
@@ -106,6 +84,52 @@ export function ReaderToolbar({
   onEditPage,
 }: ReaderToolbarProps) {
   const { lang, t } = useI18n()
+  const [tablet, setTablet] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth > 720 && window.innerWidth <= 1180,
+  )
+  const [toolbarWidth, setToolbarWidth] = useState(() => {
+    const stored = Number(localStorage.getItem('bnote-toolbar-width'))
+    return Number.isFinite(stored) && stored >= 320 ? stored : 760
+  })
+  const [expanded, setExpanded] = useState(
+    () => localStorage.getItem('bnote-toolbar-expanded') === '1',
+  )
+
+  useEffect(() => {
+    const onResize = () =>
+      setTablet(window.innerWidth > 720 && window.innerWidth <= 1180)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('bnote-toolbar-width', String(toolbarWidth))
+  }, [toolbarWidth])
+
+  useEffect(() => {
+    localStorage.setItem('bnote-toolbar-expanded', expanded ? '1' : '0')
+  }, [expanded])
+
+  const startToolbarResize = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    if (!tablet) return
+    event.preventDefault()
+    event.stopPropagation()
+    const startX = event.clientX
+    const startWidth = toolbarWidth
+    const move = (pointerEvent: PointerEvent) => {
+      const max = Math.min(window.innerWidth - 24, 1100)
+      setToolbarWidth(
+        Math.min(max, Math.max(320, startWidth + (pointerEvent.clientX - startX))),
+      )
+    }
+    const finish = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', finish)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', finish)
+  }
+
   const tools: {
     key: string
     label: string
@@ -185,7 +209,12 @@ export function ReaderToolbar({
   ]
 
   return (
-    <div className="reader__toolbar">
+    <div
+      className={`reader__toolbar${tablet ? ' reader__toolbar--floating' : ''}${
+        tablet && !expanded ? ' reader__toolbar--compact' : ''
+      }`}
+      style={tablet ? { width: `${Math.min(toolbarWidth, 1100)}px` } : undefined}
+    >
       <div className="tool-group" role="group" aria-label={t('ابزارها', 'Tools')}>
         {tools.map(({ key, label, icon: Icon, active, onClick }) => (
           <button
@@ -221,7 +250,8 @@ export function ReaderToolbar({
               onClick={() => onPenWidth(width.value)}
               title={t(`هایلایتر ${width.name}`, `Highlighter ${width.nameEn}`)}
             >
-              {lang === 'en' ? width.nameEn : width.name}
+              <StrokeWidthIcon scale={width.value} />
+              <span>{lang === 'en' ? width.nameEn : width.name}</span>
             </button>
           ))}
         </div>
@@ -250,7 +280,7 @@ export function ReaderToolbar({
 
       <button
         type="button"
-        className={`tool-btn${snapEnabled ? ' is-active' : ''}`}
+        className={`tool-btn toolbar-snap${snapEnabled ? ' is-active' : ''}`}
         onClick={onSnap}
         title={t('چسبیدن به گرید', 'Snap to grid')}
       >
@@ -277,7 +307,7 @@ export function ReaderToolbar({
 
       <button
         type="button"
-        className="tool-btn tool-btn--page"
+        className="tool-btn tool-btn--page toolbar-page"
         onClick={onAddPage}
         title={t('افزودن برگه یادداشت بعد از این برگ', 'Insert a note page after this page')}
       >
@@ -288,12 +318,24 @@ export function ReaderToolbar({
       {notebookPage && (
         <button
           type="button"
-          className="tool-btn tool-btn--notebook"
+          className="tool-btn tool-btn--notebook toolbar-page"
           onClick={onEditPage}
           title={t('تنظیمات برگه یادداشت', 'Note page settings')}
         >
           <LayoutGrid size={16} />
           <span>{notebookGridName ?? t('برگه', 'Page')}</span>
+        </button>
+      )}
+
+      {tablet && (
+        <button
+          type="button"
+          className={`tool-btn toolbar-more${expanded ? ' is-active' : ''}`}
+          onClick={() => setExpanded((value) => !value)}
+          title={expanded ? t('حالت خلاصه', 'Compact mode') : t('نمایش همه ابزارها', 'Show all tools')}
+        >
+          <SlidersHorizontal size={16} />
+          <span>{expanded ? t('خلاصه', 'Compact') : t('همه ابزارها', 'All tools')}</span>
         </button>
       )}
 
@@ -308,52 +350,14 @@ export function ReaderToolbar({
         </select>
       </label>
 
-      <div className="zoom-group">
-        <button
-          type="button"
-          className="icon-btn icon-btn--sm"
-          onClick={() => onZoom(Math.max(0.6, zoom - 0.15))}
-          title={t('کوچک‌تر', 'Zoom out')}
-          aria-label={t('کوچک‌تر', 'Zoom out')}
-        >
-          <Minus size={15} />
-        </button>
-        <span className="zoom-value">
-          {toFa(Math.round(zoom * 100))}
-          {lang === 'en' ? '%' : '٪'}
-        </span>
-        <button
-          type="button"
-          className="icon-btn icon-btn--sm"
-          onClick={() => onZoom(Math.min(2.4, zoom + 0.15))}
-          title={t('بزرگ‌تر', 'Zoom in')}
-          aria-label={t('بزرگ‌تر', 'Zoom in')}
-        >
-          <Plus size={15} />
-        </button>
-        <button
-          type="button"
-          className={`icon-btn icon-btn--sm${zoom === 1 ? ' is-active' : ''}`}
-          onClick={() => onZoom(1)}
-          title={effectiveFitMode === 'height'
-            ? t('تناسب با ارتفاع', 'Fit height')
-            : t('تناسب با عرض', 'Fit width')}
-          aria-label={effectiveFitMode === 'height'
-            ? t('تناسب با ارتفاع', 'Fit height')
-            : t('تناسب با عرض', 'Fit width')}
-        >
-          <Maximize2 size={15} />
-        </button>
-      </div>
-
-      <ViewMenu
-        viewMode={viewMode}
-        fitMode={fitMode}
-        readingTheme={readingTheme}
-        onViewMode={onViewMode}
-        onFitMode={onFitMode}
-        onReadingTheme={onReadingTheme}
-      />
+      {tablet && (
+        <span
+          className="toolbar-resize"
+          onPointerDown={startToolbarResize}
+          title={t('تغییر عرض نوار ابزار', 'Resize toolbar')}
+          aria-hidden="true"
+        />
+      )}
     </div>
   )
 }

@@ -65,7 +65,7 @@ gitignored; public contributors use the default npm registry from `.npmrc.exampl
 - `src/lib/chart.ts` — canvas chart drawing shared by export.
 - `src/components/AnnotationsPanel.tsx`, `NoteEditor.tsx`, `DocumentEditor.tsx`,
   `CollectionModal.tsx`, `Modal.tsx`, `Toast.tsx`, `Sidebar.tsx`, `DocumentCard.tsx`.
-- `android/` — generated Capacitor project (app id `ir.nivisio.app`). Don't hand-edit
+- `android/` — generated Capacitor project (app id `nivisio.jadoo`). Don't hand-edit
   generated `assets/public`; run `./script.sh sync`.
 
 ## Data invariants
@@ -189,7 +189,7 @@ Rules:
 
 ## Capacitor
 
-- `appId: ir.nivisio.app`, `appName: nivisio`, `webDir: dist`, `androidScheme: https`.
+- `appId: nivisio.jadoo`, `appName: nivisio`, `webDir: dist`, `androidScheme: https`.
 - After changing web code intended for the APK: `npm run build && npx cap sync android`.
 - Android launcher/splash assets live in `android/app/src/main/res` and use the nivisio
   logo with the flamingo background `#FFB3C1`.

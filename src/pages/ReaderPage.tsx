@@ -25,6 +25,8 @@ import {
   type ShapeConfig,
   type GuideKind,
   type TextAlign,
+  type TextVerticalAlign,
+  type TextStyle,
   type FitMode,
 } from '../lib/types'
 import {
@@ -45,28 +47,13 @@ import { ReaderBars } from '../components/reader/ReaderBars'
 import { ReaderModals } from '../components/reader/ReaderModals'
 import { ReaderPanel } from '../components/reader/ReaderPanel'
 import { SelectionPopover } from '../components/reader/SelectionPopover'
+import type {
+  NoteTarget,
+  PageTemplateState,
+  SelectedText,
+  TextTarget,
+} from '../components/reader/readerTypes'
 import { useToast } from '../components/Toast'
-
-interface SelectedText {
-  rects: NormRect[]
-  text: string
-  anchor: { x: number; y: number }
-}
-
-interface NoteTarget {
-  annotation?: Annotation
-  point?: NormPoint
-}
-
-interface PageTemplateState {
-  mode: 'create' | 'edit'
-  page?: NotebookPage
-}
-
-interface TextTarget {
-  annotation?: Annotation
-  point?: NormPoint
-}
 
 export function ReaderPage() {
   const { id } = useParams<{ id: string }>()
@@ -144,6 +131,8 @@ export function ReaderPage() {
     setReadingTheme,
     snapEnabled,
     setSnapEnabled,
+    showText,
+    setShowText,
   } = useReaderPreferences()
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
 
@@ -259,8 +248,15 @@ export function ReaderPage() {
   useEffect(() => {
     const stage = stageRef.current
     if (!stage) return
-    const update = () =>
-      setStageSize({ width: stage.clientWidth, height: stage.clientHeight })
+    const update = () => {
+      const style = window.getComputedStyle(stage)
+      const paddingTop = Number.parseFloat(style.paddingTop) || 0
+      const paddingBottom = Number.parseFloat(style.paddingBottom) || 0
+      setStageSize({
+        width: stage.clientWidth,
+        height: Math.max(0, stage.clientHeight - paddingTop - paddingBottom),
+      })
+    }
     update()
     const observer = new ResizeObserver(update)
     observer.observe(stage)
@@ -443,8 +439,8 @@ export function ReaderPage() {
     setSelectedIds([])
   }
 
-  const addText = (point: NormPoint) => {
-    setTextTarget({ point })
+  const addText = (point: NormPoint, pageAspect?: number) => {
+    setTextTarget({ point, pageAspect })
   }
 
   const saveText = async (value: {
@@ -452,6 +448,8 @@ export function ReaderPage() {
     fontSize: number
     color: string
     textAlign: TextAlign
+    verticalAlign: TextVerticalAlign
+    textStyle: TextStyle
     category: string
   }) => {
     if (!textTarget) return
@@ -470,7 +468,10 @@ export function ReaderPage() {
   const saveNote = async (text: string, chosenCategory: string) => {
     if (!noteTarget) return
     const saved = await actions.saveNote(text, chosenCategory, noteTarget)
-    if (saved) setNoteTarget(null)
+    if (saved) {
+      setNoteTarget(null)
+      setTool('select')
+    }
   }
 
   const deleteAnnotation = async (annotation: Annotation) => {
@@ -482,7 +483,7 @@ export function ReaderPage() {
     await actions.updateAnnotation(annotationId, patch)
   }
 
-  const rotateActiveTape = async (delta: number) => {
+  const rotateActiveObject = async (delta: number) => {
     if (!activeObject) return
     await actions.rotateTape(activeObject, delta)
   }
@@ -663,14 +664,14 @@ export function ReaderPage() {
     setTool('select')
   }
 
-  const addGuide = async (point: NormPoint) => {
+  const addGuide = async (point: NormPoint, pageAspect = 1.414) => {
     if (!doc || !pendingGuide) return
     const size =
       pendingGuide === 'ruler'
         ? { w: 0.62, h: 0.09 }
         : pendingGuide === 'protractor'
-          ? { w: 0.48, h: 0.28 }
-          : { w: 0.4, h: 0.38 }
+          ? { w: 0.48, h: 0.48 / (2 * pageAspect) }
+          : { w: 0.44, h: 0.44 / (Math.sqrt(3) * pageAspect) }
     const rect = {
       x: point.x - size.w / 2,
       y: point.y - size.h / 2,
@@ -913,9 +914,9 @@ export function ReaderPage() {
     tapeColor,
     notebookSize,
     fitMode: effectiveFitMode,
-    viewportHeight:
-      stageSize.height > 0 ? Math.max(280, stageSize.height - 170) : undefined,
+    viewportHeight: stageSize.height > 0 ? stageSize.height : undefined,
     readingTheme,
+    showText,
     selectedIds,
     activeObjectId,
     annotations,
@@ -933,7 +934,7 @@ export function ReaderPage() {
       void addTape(rect)
     },
     onAddText: addText,
-    onEditText: (annotation) => setTextTarget({ annotation }),
+    onEditText: (annotation, pageAspect) => setTextTarget({ annotation, pageAspect }),
     onLassoSelect: (ids) => {
       setActiveObjectId(null)
       setSelectedIds(ids)
@@ -954,8 +955,8 @@ export function ReaderPage() {
     onAddShape: (rect, flips) => {
       void addShape(rect, flips)
     },
-    onAddGuide: (point) => {
-      void addGuide(point)
+    onAddGuide: (point, pageAspect) => {
+      void addGuide(point, pageAspect)
     },
     pendingShape,
     snapEnabled,
@@ -989,11 +990,6 @@ export function ReaderPage() {
         activeColor={activeColor}
         palette={palette}
         category={category}
-        zoom={zoom}
-        fitMode={fitMode}
-        effectiveFitMode={effectiveFitMode}
-        viewMode={viewMode}
-        readingTheme={readingTheme}
         notebookPage={currentPage.kind === 'note'}
         notebookGridName={
           GRID_TYPES.find((item) => item.id === currentPage.notebook?.grid)?.[
@@ -1011,10 +1007,6 @@ export function ReaderPage() {
           else setInkColor(chosenColor)
         }}
         onCategory={setCategory}
-        onZoom={setZoom}
-        onViewMode={setViewMode}
-        onFitMode={setFitMode}
-        onReadingTheme={setReadingTheme}
         onImage={() => imageInputRef.current?.click()}
         onChart={() => setChartOpen(true)}
         onLink={() => selectTool('link')}
@@ -1137,6 +1129,17 @@ export function ReaderPage() {
             pagePercent={pagePercent}
             isRead={isCurrentRead}
             isBookmarked={isCurrentBookmarked}
+            zoom={zoom}
+            effectiveFitMode={effectiveFitMode}
+            viewMode={viewMode}
+            fitMode={fitMode}
+            readingTheme={readingTheme}
+            onZoom={setZoom}
+            onViewMode={setViewMode}
+            onFitMode={setFitMode}
+            onReadingTheme={setReadingTheme}
+            showText={showText}
+            onShowText={setShowText}
             onPageInput={setPageInput}
             onSubmitPage={submitPageInput}
             onPrev={() => goToIndex(currentIndex - pageStep)}
@@ -1151,15 +1154,15 @@ export function ReaderPage() {
 
           <ReaderBars
             tool={tool}
-            activeTape={activeTape}
+            activeObject={activeObject}
             selectedAnnotations={selectedAnnotations}
-            onRotateTape={(delta) => {
-              void rotateActiveTape(delta)
+            onRotateObject={(delta) => {
+              void rotateActiveObject(delta)
             }}
-            onDeleteTape={(annotation) => {
+            onDeleteObject={(annotation) => {
               void deleteAnnotation(annotation)
             }}
-            onCloseTape={() => setActiveObjectId(null)}
+            onCloseObject={() => setActiveObjectId(null)}
             onRecolorSelected={(color) => {
               void recolorSelected(color)
             }}

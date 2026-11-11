@@ -142,3 +142,64 @@
 }
 
 /* ---------- toasts ---------- */
+
+/* Text annotation size and style controls */
+.font-size-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.font-size-control input {
+  flex: 1;
+  accent-color: var(--accent);
+}
+.font-size-control strong {
+  min-width: 32px;
+  text-align: end;
+  color: var(--accent-ink);
+  font-size: 12px;
+}
+.font-size-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+}
+.font-size-presets button {
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 9.5px;
+}
+.font-size-presets button.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+.text-style-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+.text-style-picker button {
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 9.5px;
+}
+.text-style-picker button.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
+}

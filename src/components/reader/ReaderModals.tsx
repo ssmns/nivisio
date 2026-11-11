@@ -32,6 +32,7 @@ interface PageTemplateState {
 interface TextTarget {
   annotation?: Annotation
   point?: { x: number; y: number }
+  pageAspect?: number
 }
 
 interface ReaderModalsProps {
@@ -170,6 +171,8 @@ export function ReaderModals({
         initialSize={textTarget?.annotation?.fontSize ?? 0.024}
         initialColor={textTarget?.annotation?.color ?? inkColor}
         initialAlign={textTarget?.annotation?.textAlign ?? 'right'}
+        initialVerticalAlign={textTarget?.annotation?.verticalAlign ?? 'top'}
+        initialTextStyle={textTarget?.annotation?.textStyle ?? 'normal'}
         initialCategory={textTarget?.annotation?.category ?? category}
         onSave={onSaveText}
         onClose={onCloseText}

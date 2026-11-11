@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'ir.nivisio.app',
+  appId: 'nivisio.jadoo',
   appName: 'nivisio',
   webDir: 'dist',
   android: {

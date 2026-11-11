@@ -2,6 +2,45 @@
 
 All notable changes to nivisio are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] — 2026-11-12
+
+### Added
+
+- Tablet floating tool palette with adjustable width and a compact/all-tools toggle.
+- Resize and rotation handles for typed text boxes, including proportional font scaling.
+- Visible object action bar for charts, images, shapes, guides and text with rotation and delete.
+- Generic object deletion for all selected mark types.
+- Movable sticky notes with tap-to-edit and drag-to-move behavior.
+- Text boxes now auto-fit their text, with horizontal and vertical alignment.
+- Functional measuring guides: cm ruler with real page scale, aspect-locked protractor and 30–60 set square.
+- Library display modes: large cards, compact cards and a list view.
+- Page-size cards (three per row) and orientation buttons with portrait/landscape icons.
+- Thin/medium/thick stroke icons in pen and highlighter width controls.
+- Clicking the page closes the tablet marks panel.
+- Zoom and View controls moved into the bottom page dock.
+- Fit-height mode now works for square and custom-sized pages.
+- Library display modes: large cards, compact cards and list view.
+- Text annotation font-size slider, presets and bold/italic/bold-italic styles.
+- Show/hide page text setting, persisted in local storage.
+- View menu opens directly above its trigger and stays inside the viewport on mobile.
+- Page-size cards, orientation icons and stroke-width icons.
+
+### Changed
+
+- Tablet library grid now shows three cards per row.
+- About feature cards now show two per row on tablets.
+- App id changed to `nivisio.jadoo`; Android version bumped to `1.1.0` (versionCode 2).
+- Tablet marks panel now sits above the tool palette.
+
+### Fixed
+
+- Closing the sidebar in English/LTR mode.
+- View/layout popover going off-screen on tablets.
+- Text and chart selection/deletion on touch devices.
+- Toolbar and panel overlap in tablet layouts.
+
+---
+
 ## [1.0.0] — 2026-11-11
 
 ### Added

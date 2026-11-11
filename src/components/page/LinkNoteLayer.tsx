@@ -1,11 +1,12 @@
 import { Link2, StickyNote } from 'lucide-react'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import type { Annotation, NormPoint, NormRect } from '../../lib/types'
 import { linkLabel } from '../../lib/utils'
 import { translate } from '../../lib/lang'
 
 interface LinkNoteLayerProps {
   annotations: Annotation[]
+  showText: boolean
   interactive: boolean
   activeObjectId: string | null
   selectedClass: (annotation: Annotation) => string
@@ -15,6 +16,10 @@ interface LinkNoteLayerProps {
   size: { width: number; height: number }
   onOpenLink: (annotation: Annotation) => void
   onOpenAnnotation: (annotation: Annotation) => void
+  beginObjectDrag: (
+    event: ReactPointerEvent<Element>,
+    annotation: Annotation,
+  ) => void
   linkDraft: NormRect | null
   tapeDraft: NormRect | null
   tapeColor: string
@@ -24,6 +29,7 @@ interface LinkNoteLayerProps {
 
 export function LinkNoteLayer({
   annotations,
+  showText,
   interactive,
   activeObjectId,
   selectedClass,
@@ -33,6 +39,7 @@ export function LinkNoteLayer({
   size,
   onOpenLink,
   onOpenAnnotation,
+  beginObjectDrag,
   linkDraft,
   tapeDraft,
   tapeColor,
@@ -69,7 +76,9 @@ export function LinkNoteLayer({
                 title={linkLabel(annotation)}
               >
                 <Link2 size={12} />
-                <span>{annotation.link?.label || linkLabel(annotation)}</span>
+                {showText && (
+                  <span>{annotation.link?.label || linkLabel(annotation)}</span>
+                )}
               </button>
             )
           })}
@@ -96,6 +105,7 @@ export function LinkNoteLayer({
                       : undefined,
                 }}
                 title={annotation.note || translate('یادداشت', 'Note')}
+                onPointerDown={(event) => beginObjectDrag(event, annotation)}
                 onClick={(event) => {
                   event.stopPropagation()
                   onOpenAnnotation(annotation)

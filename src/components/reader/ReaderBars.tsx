@@ -1,60 +1,90 @@
-import { Bandage, Eraser, Lasso, RotateCcw, RotateCw, Trash2, X } from 'lucide-react'
+import {
+  Bandage,
+  BarChart3,
+  Eraser,
+  Image as ImageIcon,
+  Lasso,
+  RotateCcw,
+  RotateCw,
+  Ruler,
+  Shapes,
+  Trash2,
+  Type,
+  X,
+} from 'lucide-react'
 import { INK_COLORS, type Annotation } from '../../lib/types'
-import { toFa } from '../../lib/utils'
+import { annotationLabel, toFa } from '../../lib/utils'
 import { useI18n } from '../../lib/i18n'
 
 interface ReaderBarsProps {
   tool: string
-  activeTape: Annotation | null
+  activeObject: Annotation | null
   selectedAnnotations: Annotation[]
-  onRotateTape: (delta: number) => void
-  onDeleteTape: (annotation: Annotation) => void
-  onCloseTape: () => void
+  onRotateObject: (delta: number) => void
+  onDeleteObject: (annotation: Annotation) => void
+  onCloseObject: () => void
   onRecolorSelected: (color: string) => void
   onDeleteSelected: () => void
   onClearSelection: () => void
 }
 
+const iconFor = (annotation: Annotation) => {
+  if (annotation.type === 'chart') return BarChart3
+  if (annotation.type === 'image') return ImageIcon
+  if (annotation.type === 'shape') return Shapes
+  if (annotation.type === 'guide') return Ruler
+  if (annotation.type === 'text') return Type
+  return Bandage
+}
+
 export function ReaderBars({
   tool,
-  activeTape,
+  activeObject,
   selectedAnnotations,
-  onRotateTape,
-  onDeleteTape,
-  onCloseTape,
+  onRotateObject,
+  onDeleteObject,
+  onCloseObject,
   onRecolorSelected,
   onDeleteSelected,
   onClearSelection,
 }: ReaderBarsProps) {
   const { t } = useI18n()
+  const canRotate =
+    activeObject &&
+    ['tape', 'image', 'chart', 'shape', 'guide', 'text'].includes(activeObject.type)
+  const Icon = activeObject ? iconFor(activeObject) : Bandage
   return (
     <>
-      {activeTape && tool === 'select' && (
+      {activeObject && tool === 'select' && (
         <div className="object-bar">
           <span className="object-bar__title">
-            <Bandage size={15} />
-            {t('نوار چسب', 'Tape')}
+            <Icon size={15} />
+            {annotationLabel(activeObject)}
           </span>
-          <button
-            type="button"
-            onClick={() => onRotateTape(-15)}
-            title={t('چرخش ۱۵ درجه به چپ', 'Rotate 15° left')}
-          >
-            <RotateCcw size={14} />
-            {t('چرخش', 'Rotate')}
-          </button>
-          <button
-            type="button"
-            onClick={() => onRotateTape(15)}
-            title={t('چرخش ۱۵ درجه به راست', 'Rotate 15° right')}
-          >
-            <RotateCw size={14} />
-            {t('چرخش', 'Rotate')}
-          </button>
+          {canRotate && (
+            <>
+              <button
+                type="button"
+                onClick={() => onRotateObject(-15)}
+                title={t('چرخش ۱۵ درجه به چپ', 'Rotate 15° left')}
+              >
+                <RotateCcw size={14} />
+                {t('چرخش', 'Rotate')}
+              </button>
+              <button
+                type="button"
+                onClick={() => onRotateObject(15)}
+                title={t('چرخش ۱۵ درجه به راست', 'Rotate 15° right')}
+              >
+                <RotateCw size={14} />
+                {t('چرخش', 'Rotate')}
+              </button>
+            </>
+          )}
           <button
             type="button"
             className="object-bar__delete"
-            onClick={() => onDeleteTape(activeTape)}
+            onClick={() => onDeleteObject(activeObject)}
           >
             <Trash2 size={14} />
             {t('حذف', 'Delete')}
@@ -62,17 +92,19 @@ export function ReaderBars({
           <button
             type="button"
             className="object-bar__close"
-            onClick={onCloseTape}
+            onClick={onCloseObject}
             title={t('بستن انتخاب', 'Clear selection')}
             aria-label={t('بستن انتخاب', 'Clear selection')}
           >
             <X size={14} />
           </button>
           <span className="object-bar__hint">
-            {t(
-              'دستگیره‌ها: تغییر اندازه · دایره بالا: چرخش · رنگ از پالت',
-              'Handles: resize · top circle: rotate · palette: color',
-            )}
+            {canRotate
+              ? t(
+                  'دستگیره‌ها: تغییر اندازه و چرخش · رنگ از پالت',
+                  'Handles: resize and rotate · palette: color',
+                )
+              : t('برای حذف از دکمهٔ حذف استفاده کنید', 'Use the delete button to remove this mark')}
           </span>
         </div>
       )}
@@ -108,7 +140,9 @@ export function ReaderBars({
           >
             <X size={14} />
           </button>
-          <span className="lasso-bar__hint">{t('برای جابه‌جایی، انتخاب را بکشید', 'Drag the selection to move it')}</span>
+          <span className="lasso-bar__hint">
+            {t('برای جابه‌جایی، انتخاب را بکشید', 'Drag the selection to move it')}
+          </span>
         </div>
       )}
     </>

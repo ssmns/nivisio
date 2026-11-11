@@ -94,6 +94,8 @@ export type AnnotationType =
   | 'guide'
 
 export type TextAlign = 'right' | 'left' | 'center'
+export type TextVerticalAlign = 'top' | 'middle' | 'bottom'
+export type TextStyle = 'normal' | 'bold' | 'italic' | 'bold-italic'
 
 export type PenStyle = 'pen' | 'pencil' | 'brush' | 'marker' | 'fountain' | 'dashed'
 
@@ -188,6 +190,8 @@ export interface Annotation {
   text?: string
   fontSize?: number
   textAlign?: TextAlign
+  verticalAlign?: TextVerticalAlign
+  textStyle?: TextStyle
   note?: string
   image?: string
   chart?: ChartConfig

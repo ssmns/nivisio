@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode, PointerEvent as ReactPointerEvent } from 'react'
 import type { Annotation, ReaderTool } from '../../lib/types'
 import { polygonPoints, starPoints } from '../../lib/utils'
+import { GuideView } from './GuideView'
 
 interface BoxGeometry {
   x: number
@@ -22,6 +23,8 @@ interface ShapeGuideLayerProps {
     event: ReactPointerEvent<HTMLDivElement>,
     annotation: Annotation,
   ) => void
+  pageSize: { width: number; height: number }
+  pagePoints: { width: number; height: number }
 }
 
 export function ShapeGuideLayer({
@@ -33,6 +36,8 @@ export function ShapeGuideLayer({
   tapeGeometryFor,
   boxHandles,
   beginTapeTransform,
+  pageSize,
+  pagePoints,
 }: ShapeGuideLayerProps) {
   const guides = annotations.filter((annotation) => annotation.type === 'guide')
   const shapes = annotations.filter((annotation) => annotation.type === 'shape')
@@ -61,50 +66,13 @@ export function ShapeGuideLayer({
                 }}
                 onPointerDown={(event) => beginTapeTransform(event, annotation)}
               >
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="guide-svg">
-                  {kind === 'ruler' && (
-                    <>
-                      <rect x="1" y="1" width="98" height="98" rx="2" fill="rgba(244,63,94,0.06)" stroke="currentColor" strokeWidth="0.8" />
-                      {Array.from({ length: 21 }, (_, i) => (
-                        <line
-                          key={i}
-                          x1={4 + i * 4.6}
-                          y1="1"
-                          x2={4 + i * 4.6}
-                          y2={i % 5 === 0 ? 18 : 10}
-                          stroke="currentColor"
-                          strokeWidth="0.7"
-                        />
-                      ))}
-                      <text x="50" y="75" textAnchor="middle" fontSize="9" fill="currentColor">cm</text>
-                    </>
-                  )}
-                  {kind === 'protractor' && (
-                    <>
-                      <path d="M 8 72 A 42 42 0 0 1 92 72" fill="rgba(244,63,94,0.06)" stroke="currentColor" strokeWidth="1" />
-                      <line x1="8" y1="72" x2="92" y2="72" stroke="currentColor" strokeWidth="0.8" />
-                      {Array.from({ length: 13 }, (_, i) => {
-                        const angle = Math.PI + (i * Math.PI) / 12
-                        const inner = 38
-                        return (
-                          <line
-                            key={i}
-                            x1={50}
-                            y1={72}
-                            x2={50 + Math.cos(angle) * inner}
-                            y2={72 + Math.sin(angle) * inner}
-                            stroke="currentColor"
-                            strokeWidth="0.6"
-                          />
-                        )
-                      })}
-                      <text x="50" y="85" textAnchor="middle" fontSize="7" fill="currentColor">180°</text>
-                    </>
-                  )}
-                  {kind === 'triangle' && (
-                    <polygon points="10,90 90,90 90,10" fill="rgba(244,63,94,0.05)" stroke="currentColor" strokeWidth="1.2" />
-                  )}
-                </svg>
+                <GuideView
+                  kind={kind}
+                  width={geometry.w * pageSize.width}
+                  height={geometry.h * pageSize.height}
+                  pageWidthPt={pagePoints.width}
+                  pageWidthPx={pageSize.width}
+                />
                 {boxHandles(isActive)}
               </div>
             )
