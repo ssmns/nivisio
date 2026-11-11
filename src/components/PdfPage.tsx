@@ -603,9 +603,8 @@ export function PdfPage({
       cleanup()
     }
     const cancel = () => {
-      tapeDragRef.current = null
-      tapePreviewRef.current = null
-      setTapePreview(null)
+      // A cancelled pointer (common on touch) must not throw away a real move.
+      commitTapeTransform()
       cleanup()
     }
     const cleanup = () => {

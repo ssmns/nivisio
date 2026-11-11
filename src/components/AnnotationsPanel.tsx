@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import {
   BarChart3,
   Bandage,
@@ -89,11 +89,13 @@ export function AnnotationsPanel({
   onUpdate,
   onReorder,
 }: AnnotationsPanelProps) {
-  const { lang, t } = useI18n()
+  const { isRtl, lang, t } = useI18n()
   const [typeFilter, setTypeFilter] = useState<AnnotationType | 'all'>('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
+  const pointerDragRef = useRef<{ id: string; pointerId: number } | null>(null)
+  const pointerMovedRef = useRef(false)
 
   const pageOrder = useMemo(() => {
     const map = new Map<string, number>()
@@ -168,17 +170,94 @@ export function AnnotationsPanel({
             ? t('نوار چسب روی محتوا', 'Tape covering content')
             : annotationLabel(annotation))
 
-  const dropOn = (target: Annotation) => {
-    if (!draggingId || draggingId === target.id) return
-    const source = annotations.find((item) => item.id === draggingId)
-    if (!source || source.pageRef !== target.pageRef) return
+  const reorderTo = (sourceId: string, target: Annotation) => {
+    const source = annotations.find((item) => item.id === sourceId)
+    if (!source || sourceId === target.id || source.pageRef !== target.pageRef) return false
     const pageIds = filtered
       .filter((item) => item.pageRef === target.pageRef)
       .map((item) => item.id)
-      .filter((id) => id !== draggingId)
+      .filter((id) => id !== sourceId)
     const targetIndex = pageIds.indexOf(target.id)
-    pageIds.splice(targetIndex < 0 ? pageIds.length : targetIndex, 0, draggingId)
+    pageIds.splice(targetIndex < 0 ? pageIds.length : targetIndex, 0, sourceId)
     onReorder(target.pageRef, pageIds)
+    return true
+  }
+
+  const dropOn = (target: Annotation) => {
+    if (!draggingId) return
+    reorderTo(draggingId, target)
+    setDraggingId(null)
+    setDragOverId(null)
+  }
+
+  const commitPointerReorder = (clientX: number, clientY: number) => {
+    const drag = pointerDragRef.current
+    if (!drag) return
+    pointerDragRef.current = null
+    const targetElement = document
+      .elementFromPoint(clientX, clientY)
+      ?.closest('[data-annotation-id]') as HTMLElement | null
+    const targetId = targetElement?.dataset.annotationId
+    const target = annotations.find((item) => item.id === targetId)
+    if (target) reorderTo(drag.id, target)
+    setDraggingId(null)
+    setDragOverId(null)
+  }
+
+  const beginPointerReorder = (
+    event: ReactPointerEvent<HTMLElement>,
+    annotation: Annotation,
+  ) => {
+    if (event.pointerType === 'mouse') return
+    const rect = event.currentTarget.getBoundingClientRect()
+    const nearGrip = isRtl
+      ? event.clientX >= rect.right - 34
+      : event.clientX <= rect.left + 34
+    if (!nearGrip) return
+    event.preventDefault()
+    event.stopPropagation()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    pointerDragRef.current = { id: annotation.id, pointerId: event.pointerId }
+    pointerMovedRef.current = false
+    setDraggingId(annotation.id)
+    setDragOverId(null)
+
+    const cleanup = () => {
+      window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('touchcancel', onTouchCancel)
+    }
+    const onTouchEnd = (touchEvent: TouchEvent) => {
+      cleanup()
+      const touch = touchEvent.changedTouches[0]
+      if (touch) commitPointerReorder(touch.clientX, touch.clientY)
+    }
+    const onTouchCancel = () => {
+      cleanup()
+      commitPointerReorder(0, 0)
+    }
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    window.addEventListener('touchcancel', onTouchCancel, { passive: true })
+  }
+
+  const movePointerReorder = (event: ReactPointerEvent<HTMLElement>) => {
+    if (!pointerDragRef.current) return
+    pointerMovedRef.current = true
+    const target = document
+      .elementFromPoint(event.clientX, event.clientY)
+      ?.closest('[data-annotation-id]') as HTMLElement | null
+    const id = target?.dataset.annotationId
+    setDragOverId(id && id !== pointerDragRef.current.id ? id : null)
+  }
+
+  const finishPointerReorder = (event: ReactPointerEvent<HTMLElement>) => {
+    commitPointerReorder(event.clientX, event.clientY)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  const cancelPointerReorder = () => {
+    pointerDragRef.current = null
     setDraggingId(null)
     setDragOverId(null)
   }
@@ -393,11 +472,12 @@ export function AnnotationsPanel({
             return (
               <article
                 key={annotation.id}
+                data-annotation-id={annotation.id}
                 className={`annotation-item${
                   annotation.pageRef === currentPageKey ? ' is-current' : ''
                 }${annotation.id === selectedId ? ' is-selected' : ''}${
                   dragOverId === annotation.id ? ' is-drag-over' : ''
-                }`}
+                }${draggingId === annotation.id ? ' is-dragging' : ''}`}
                 draggable
                 onDragStart={() => setDraggingId(annotation.id)}
                 onDragEnd={() => {
@@ -412,10 +492,25 @@ export function AnnotationsPanel({
                   event.preventDefault()
                   dropOn(annotation)
                 }}
+                onPointerDown={(event) => beginPointerReorder(event, annotation)}
+                onPointerMove={movePointerReorder}
+                onPointerUp={finishPointerReorder}
+                onPointerCancel={cancelPointerReorder}
+                onClickCapture={(event) => {
+                  if (!pointerMovedRef.current) return
+                  pointerMovedRef.current = false
+                  event.preventDefault()
+                  event.stopPropagation()
+                }}
               >
-                <span className="annotation-item__drag" title={t('جابه‌جایی', 'Reorder')}>
+                <button
+                  type="button"
+                  className="annotation-item__drag"
+                  title={t('جابه‌جایی', 'Reorder')}
+                  aria-label={t('جابه‌جایی', 'Reorder')}
+                >
                   <GripVertical size={13} />
-                </span>
+                </button>
                 <button
                   type="button"
                   className="annotation-item__main"

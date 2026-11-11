@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible problem in nivisio.
+description: Report a reproducible problem in NIVISO.
 title: "[Bug]: "
 labels: ["bug"]
 body:

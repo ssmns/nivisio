@@ -1,8 +1,8 @@
-# AGENTS.md — nivisio
+# AGENTS.md — NIVISO
 
 ## Product
 
-nivisio is a local-first PDF library, reader and notebook app in Persian/RTL.
+NIVISO is a local-first PDF library, reader and notebook app in Persian/RTL.
 Users import PDFs, organize them into study collections, resume reading where they
 left off, add highlights, pen/pencil/highlighter strokes, tape, typed text,
 images, charts and links, and insert notebook pages with different grids between
@@ -192,14 +192,16 @@ Rules:
   drags the stage on touch and mouse. Page slots must not use paint containment
   (`content-visibility: auto`) or the horizontal overflow of a zoomed page stops being
   scrollable in RTL.
+- Reader side panel tabs: Marks, Info and Assets. `Assets` is the future clipart library;
+  it must stay lightweight until clipart insertion exists.
 - Text annotations use `dir="auto"`, `unicode-bidi: plaintext` and Vazirmatn so
   Persian and mixed-direction strings render correctly.
 
 ## Capacitor
 
-- `appId: nivisio.jadoo`, `appName: nivisio`, `webDir: dist`, `androidScheme: https`.
+- `appId: nivisio.jadoo`, `appName: NIVISO`, `webDir: dist`, `androidScheme: https`.
 - After changing web code intended for the APK: `npm run build && npx cap sync android`.
-- Android launcher/splash assets live in `android/app/src/main/res` and use the nivisio
+- Android launcher/splash assets live in `android/app/src/main/res` and use the NIVISO
   logo with the flamingo background `#FFB3C1`.
 - Capacitor 6 targets JDK 17 and Android SDK 34. Do not upgrade to Capacitor 7
   without checking JDK 21 and AGP compatibility.

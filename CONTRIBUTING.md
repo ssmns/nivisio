@@ -1,6 +1,6 @@
-# Contributing to nivisio
+# Contributing to NIVISO
 
-Thanks for your interest. nivisio is a local-first, bilingual PDF reader and notebook. Contributions of all sizes are welcome: bug reports, translations, accessibility, documentation, performance, design and code.
+Thanks for your interest. NIVISO is a local-first, bilingual PDF reader and notebook. Contributions of all sizes are welcome: bug reports, translations, accessibility, documentation, performance, design and code.
 
 ## Before you start
 

@@ -116,9 +116,7 @@ export function useShapeEndpoints({
       })
     }
     const cancel = () => {
-      dragRef.current = null
-      publish(null)
-      cleanup()
+      finish()
     }
     const cleanup = () => {
       window.removeEventListener('pointermove', move)

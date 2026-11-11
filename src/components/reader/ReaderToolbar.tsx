@@ -170,34 +170,6 @@ export function ReaderToolbar({
 
   return (
     <div className="reader__toolbar">
-      {tool === 'pen' && (
-        <PenPicker
-          value={penStyle}
-          widthScale={penWidthScale}
-          onChange={onPenStyle}
-          onWidthChange={onPenWidth}
-        />
-      )}
-
-      {tool === 'marker' && (
-        <div className="marker-widths" role="group" aria-label={t('ضخامت هایلایتر', 'Highlighter width')}>
-          {PEN_WIDTHS.map((width) => (
-            <button
-              key={width.name}
-              type="button"
-              className={penWidthScale === width.value ? 'is-active' : ''}
-              onClick={() => onPenWidth(width.value)}
-              title={t(`هایلایتر ${width.name}`, `Highlighter ${width.nameEn}`)}
-            >
-              <StrokeWidthIcon scale={width.value} />
-              <span className="marker-width-label">
-                {lang === 'en' ? width.nameEn : width.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
-
       <div className="tool-group" role="group" aria-label={t('ابزارها', 'Tools')}>
         {tools.map(({ key, label, icon: Icon, active, onClick }) => (
           <button
@@ -220,17 +192,46 @@ export function ReaderToolbar({
         tool === 'pen' ||
         tool === 'tape' ||
         tool === 'text') && (
-        <div className="color-picker" role="group" aria-label={t('رنگ', 'Color')}>
-          {palette.map((item) => (
-            <button
-              key={item.value}
-              type="button"
-              className={`color-dot color-dot--sm${activeColor === item.value ? ' is-active' : ''}`}
-              style={{ background: item.value }}
-              onClick={() => onColor(item.value)}
-              title={lang === 'en' ? item.nameEn : item.name}
-              aria-label={t(`رنگ ${item.name}`, `Color ${item.nameEn}`)}
+        <div className="color-tools">
+          <div className="color-picker" role="group" aria-label={t('رنگ', 'Color')}>
+            {palette.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                className={`color-dot color-dot--sm${activeColor === item.value ? ' is-active' : ''}`}
+                style={{ background: item.value }}
+                onClick={() => onColor(item.value)}
+                title={lang === 'en' ? item.nameEn : item.name}
+                aria-label={t(`رنگ ${item.name}`, `Color ${item.nameEn}`)}
+              />
+            ))}
+          </div>
+          {tool === 'pen' && (
+            <PenPicker
+              value={penStyle}
+              widthScale={penWidthScale}
+              onChange={onPenStyle}
+              onWidthChange={onPenWidth}
             />
+          )}
+        </div>
+      )}
+
+      {tool === 'marker' && (
+        <div className="marker-widths" role="group" aria-label={t('ضخامت هایلایتر', 'Highlighter width')}>
+          {PEN_WIDTHS.map((width) => (
+            <button
+              key={width.name}
+              type="button"
+              className={penWidthScale === width.value ? 'is-active' : ''}
+              onClick={() => onPenWidth(width.value)}
+              title={t(`هایلایتر ${width.name}`, `Highlighter ${width.nameEn}`)}
+            >
+              <StrokeWidthIcon scale={width.value} />
+              <span className="marker-width-label">
+                {lang === 'en' ? width.nameEn : width.name}
+              </span>
+            </button>
           ))}
         </div>
       )}

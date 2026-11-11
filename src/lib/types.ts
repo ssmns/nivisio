@@ -121,7 +121,7 @@ export interface NormPoint {
   y: number
 }
 
-export type ChartKind = 'bar' | 'line' | 'area' | 'pie' | 'radar'
+export type ChartKind = 'bar' | 'hbar' | 'line' | 'area' | 'scatter' | 'pie' | 'radar'
 
 export interface ChartConfig {
   kind: ChartKind
@@ -146,6 +146,9 @@ export type ShapeKind =
   | 'triangle'
   | 'polygon'
   | 'star'
+  | 'spiral'
+  | 'heart'
+  | 'diamond'
 
 export interface ShapeConfig {
   kind: ShapeKind
@@ -320,6 +323,9 @@ export const SHAPE_KINDS: { id: ShapeKind; name: string; nameEn: string }[] = [
   { id: 'triangle', name: 'مثلث', nameEn: 'Triangle' },
   { id: 'polygon', name: 'چندضلعی', nameEn: 'Polygon' },
   { id: 'star', name: 'ستاره', nameEn: 'Star' },
+  { id: 'spiral', name: 'مارپیچ', nameEn: 'Spiral' },
+  { id: 'heart', name: 'قلب', nameEn: 'Heart' },
+  { id: 'diamond', name: 'لوزی', nameEn: 'Diamond' },
 ]
 
 export const GUIDE_KINDS: { id: GuideKind; name: string; nameEn: string }[] = [

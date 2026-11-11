@@ -1,9 +1,9 @@
 <div dir="rtl">
 
-# نیویسیو (nivisio)
+# نی‌ویسیو (NIVISO)
 
 <p align="center">
-  <img src="./docs/logo-full-light.png" alt="nivisio" width="560" />
+  <img src="./docs/logo-full-light.png" alt="نی‌ویسیو" width="560" />
 </p>
 
 <p align="center">
@@ -39,10 +39,14 @@
 - خودکار، مداد، قلم نرم، قلم نی، خط‌چین و ماژیک با پشتیبانی از فشار استایلوس.
 - هایلایت متن، هایلایتر آزاد، نوار چسب، پاک‌کن و لاسو.
 - متن، تصویر شفاف (PNG/WebP)، نمودار، نوار چسب و شکل‌های قابل جابه‌جایی، تغییر اندازه و چرخش.
-- شکل‌ها: خط، فلش، مستطیل، بیضی، دایره، مثلث، چندضلعی و ستاره با تعداد گوشهٔ دلخواه.
+- شکل‌ها: خط، فلش، فلش منحنی، فلش بزیه، مستطیل، بیضی، دایره، مثلث، چندضلعی، ستاره، مارپیچ، قلب و لوزی با آیکون اختصاصی در انتخاب‌گر.
+- نمودارهای میله‌ای، میله‌ای افقی، خطی، سطحی، نقطه‌ای، دایره‌ای و راداری.
 - ابزار اندازه‌گیری: خط‌کش، گونیا و نقاله با اسنپ به لبه.
 - اسنپ وابسته به گرید: خط‌دار، شطرنجی، نقطه‌ای، میلی‌متری، ایزومتریک، ۳۰–۶۰ واقعی و دایره‌ای.
 - رسم خط مستقیم با قفل زاویه در گام‌های ۱۵ درجه.
+
+### پنل خواننده
+- سه تب **نشانه‌ها**، **اطلاعات** و **دارایی‌ها**؛ تب دارایی‌ها برای کلیپ‌آرت‌های آینده آماده شده است.
 
 ### یادداشت و خروجی
 - سند یادداشت مستقل با اندازه‌های A4/A5/B5/Letter/مربع/دلخواه و جهت عمودی/افقی.
@@ -57,11 +61,11 @@
 
 | کتابخانه | خواننده |
 | --- | --- |
-| <img src="./docs/screenshots/library-light.png" alt="کتابخانهٔ nivisio" /> | <img src="./docs/screenshots/reader-light.png" alt="خوانندهٔ nivisio" /> |
+| <img src="./docs/screenshots/library-light.png" alt="کتابخانهٔ نی‌ویسیو" /> | <img src="./docs/screenshots/reader-light.png" alt="خوانندهٔ نی‌ویسیو" /> |
 
 | ابزارهای یادداشت | درباره |
 | --- | --- |
-| <img src="./docs/screenshots/notebook-tools.png" alt="ابزارهای یادداشت" /> | <img src="./docs/screenshots/about.png" alt="دربارهٔ nivisio" /> |
+| <img src="./docs/screenshots/notebook-tools.png" alt="ابزارهای یادداشت" /> | <img src="./docs/screenshots/about.png" alt="دربارهٔ نی‌ویسیو" /> |
 
 <p align="center">
   <img src="./docs/screenshots/templates.png" alt="قالب‌های یادداشت" width="78%" />
@@ -129,11 +133,11 @@ npx cap sync android
 
 پیش‌نیاز: **JDK 17** و **Android SDK Platform 34 + Build-Tools 34**. اگر SDK کامل نباشد، `./script.sh doctor` موارد کم را نشان می‌دهد.
 
-آیکون لانچر، آیکون adaptive (شامل monochrome)، تصاویر Splash و نام اپ از دارایی‌های برند nivisio در `public/` و `android/app/src/main/res/` استفاده می‌کنند.
+آیکون لانچر، آیکون adaptive (شامل monochrome)، تصاویر Splash و نام اپ از دارایی‌های برند نی‌ویسیو در `public/` و `android/app/src/main/res/` استفاده می‌کنند.
 
 ## حریم خصوصی
 
-nivisio از ابتدا آفلاین طراحی شده است:
+نی‌ویسیو از ابتدا آفلاین طراحی شده است:
 
 - PDFها، هایلایت‌ها، یادداشت‌ها و تصویرها در IndexedDB روی دستگاه می‌مانند.
 - حساب کاربری، سرور، دیتابیس یا تلمتری وجود ندارد.
@@ -188,7 +192,7 @@ nivisio/
 ## توسعه‌دهنده
 
 <p align="right">
-  <img src="./docs/logo-full-light.png" alt="nivisio" width="320" />
+  <img src="./docs/logo-full-light.png" alt="نی‌ویسیو" width="320" />
 </p>
 <p align="right">
   <img src="./docs/jadoo-studio.png" alt="Jadoo Studio" width="300" />

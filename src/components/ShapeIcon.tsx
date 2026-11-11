@@ -1,4 +1,5 @@
 import type { ShapeKind } from '../lib/types'
+import { spiralPoints } from '../lib/shapes'
 
 interface ShapeIconProps {
   kind: ShapeKind
@@ -48,6 +49,21 @@ export function ShapeIcon({ kind }: ShapeIconProps) {
       {kind === 'star' && (
         <polygon
           points="12,2.5 14.7,8.9 21.5,9.5 16.3,14 17.9,20.7 12,17.1 6.1,20.7 7.7,14 2.5,9.5 9.3,8.9"
+          {...stroke}
+        />
+      )}
+      {kind === 'diamond' && <polygon points="12,2 22,12 12,22 2,12" {...stroke} />}
+      {kind === 'heart' && (
+        <path
+          d="M12 21 C 7 16.5 2 13 2 8.5 C 2 5 4.5 3 7 3 C 9 3 11 4.5 12 6 C 13 4.5 15 3 17 3 C 19.5 3 22 5 22 8.5 C 22 13 17 16.5 12 21 Z"
+          {...stroke}
+        />
+      )}
+      {kind === 'spiral' && (
+        <polyline
+          points={spiralPoints(24, 24, 2.4, 90)
+            .map((point) => `${point.x},${point.y}`)
+            .join(' ')}
           {...stroke}
         />
       )}

@@ -421,7 +421,7 @@ export async function exportAnnotatedPdf({
   if (document.fonts?.ready) await document.fonts.ready
   const out = await PDFDocument.create()
   out.setTitle(title)
-  out.setCreator('nivisio')
+  out.setCreator('NIVISO')
   const noteWidth = notebookSize?.width ?? 595
   const noteHeight = notebookSize?.height ?? 842
 
@@ -491,7 +491,7 @@ export async function saveBlobAsFile(blob: Blob, fileName: string): Promise<void
   if (Capacitor.isNativePlatform()) {
     const base64 = await blobToBase64(blob)
     const written = await Filesystem.writeFile({
-      path: `nivisio/${fileName}`,
+      path: `NIVISO/${fileName}`,
       data: base64,
       directory: Directory.Cache,
       recursive: true,
@@ -514,6 +514,6 @@ export async function saveBlobAsFile(blob: Blob, fileName: string): Promise<void
 }
 
 export function exportFileName(title: string): string {
-  const clean = title.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'nivisio'
-  return `${clean}-nivisio.pdf`
+  const clean = title.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'NIVISO'
+  return `${clean}-NIVISO.pdf`
 }

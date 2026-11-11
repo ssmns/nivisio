@@ -1,4 +1,4 @@
-/* nivisio style entrypoint — keep this file to imports only. */
+/* NIVISO style entrypoint — keep this file to imports only. */
 @import './tokens.css';
 @import './base.css';
 @import './layout.css';

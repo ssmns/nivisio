@@ -104,7 +104,7 @@ export function Sidebar({
         <div className="sidebar__brand">
           <img className="brand-mark brand-mark--logo" src="/icon-192.png" alt="" aria-hidden="true" />
           <div>
-            <strong>nivisio</strong>
+            <strong>NIVISO</strong>
             <p>{t('کتابخانه و یادداشت PDF', 'PDF library & notes')}</p>
           </div>
           <button type="button" className="icon-btn sidebar__close" onClick={onClose} aria-label={t('بستن', 'Close')}>
@@ -260,7 +260,7 @@ export function Sidebar({
             }}
           >
             <Info size={15} />
-            {t('درباره nivisio و توسعه‌دهندگان', 'About nivisio & developers')}
+            {t('درباره نی‌ویسیو و توسعه‌دهندگان', 'About NIVISO & developers')}
           </button>
           <div className="theme-switch" role="group" aria-label={t('پوسته', 'Theme')}>
             <button

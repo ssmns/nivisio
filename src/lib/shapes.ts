@@ -133,3 +133,23 @@ export function bezierBendFromPoint(
   const projection = (point.x - baseX) * normalX + (point.y - baseY) * normalY
   return projection / length
 }
+
+/** Archimedean spiral in pixel space, used by both the editor and PDF export. */
+export function spiralPoints(
+  width: number,
+  height: number,
+  turns = 2.8,
+  steps = 160,
+): NormPoint[] {
+  const cx = width / 2
+  const cy = height / 2
+  const maxRadius = Math.min(width, height) * 0.46
+  const points: NormPoint[] = []
+  for (let index = 0; index <= steps; index += 1) {
+    const t = index / steps
+    const angle = t * turns * Math.PI * 2 - Math.PI / 2
+    const radius = maxRadius * (0.06 + 0.94 * t)
+    points.push({ x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius })
+  }
+  return points
+}

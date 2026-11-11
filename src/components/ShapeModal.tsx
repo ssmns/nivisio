@@ -98,7 +98,7 @@ export function ShapeModal({ open, onSave, onClose }: ShapeModalProps) {
             />
           </label>
         )}
-        {kind !== 'line' && kind !== 'arrow' && kind !== 'curve-arrow' && kind !== 'bezier-arrow' && (
+        {kind !== 'line' && kind !== 'arrow' && kind !== 'curve-arrow' && kind !== 'bezier-arrow' && kind !== 'spiral' && (
           <label className="field field--check">
             <input type="checkbox" checked={filled} onChange={(e) => setFilled(e.target.checked)} />
             <span>{t('توپر', 'Filled')}</span>

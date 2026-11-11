@@ -1,9 +1,9 @@
 {
   "name": "nivisio",
   "private": true,
-  "version": "1.1.4",
+  "version": "1.1.5",
   "type": "module",
-  "description": "nivisio — کتابخانه و دفتر یادداشت PDF با هایلایت و حاشیه‌نویسی",
+  "description": "NIVISO — کتابخانه و دفتر یادداشت PDF با هایلایت و حاشیه‌نویسی",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --strictPort",
     "build": "tsc -b && vite build",

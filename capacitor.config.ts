@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'nivisio.jadoo',
-  appName: 'nivisio',
+  appName: 'NIVISO',
   webDir: 'dist',
   android: {
     allowMixedContent: false,

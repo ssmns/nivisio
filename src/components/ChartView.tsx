@@ -190,6 +190,92 @@ export function ChartView({ config, compact }: ChartViewProps) {
     )
   }
 
+  if (config.kind === 'hbar') {
+    const top = config.title ? 17 : 9
+    const bottom = 88
+    const slot = (bottom - top) / Math.max(1, values.length)
+    const plotX = 30
+    const plotWidth = 62
+    return (
+      <svg
+        className="chart-svg"
+        viewBox="0 0 100 100"
+        role="img"
+        aria-label={config.title || translate('نمودار میله‌ای افقی', 'Horizontal bar chart')}
+      >
+        {background}
+        {config.title && (
+          <text x="50" y="9" textAnchor="middle" className="chart-title">
+            {config.title}
+          </text>
+        )}
+        <line x1={plotX} y1={top} x2={plotX} y2={bottom} stroke="#c9ccd8" strokeWidth=".8" />
+        {values.map((value, index) => {
+          const barHeight = slot * 0.56
+          const barWidth = (value / max) * plotWidth
+          const y = top + index * slot + (slot - barHeight) / 2
+          return (
+            <g key={index}>
+              <rect
+                x={plotX}
+                y={y}
+                width={barWidth}
+                height={barHeight}
+                rx={1.5}
+                fill={config.color || FALLBACK_COLORS[index % FALLBACK_COLORS.length]}
+                opacity={0.9}
+              >
+                <title>{`${labels[index] ?? ''}: ${value}`}</title>
+              </rect>
+              <text
+                x={plotX - 2}
+                y={y + barHeight * 0.72}
+                textAnchor="end"
+                className="chart-label"
+              >
+                {labels[index] ?? ''}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    )
+  }
+
+  if (config.kind === 'scatter') {
+    const coords = values.map((value, index) => ({
+      x: 14 + (index / Math.max(1, values.length - 1)) * 76,
+      y: 82 - (value / max) * 62,
+    }))
+    return (
+      <svg
+        className="chart-svg"
+        viewBox="0 0 100 100"
+        role="img"
+        aria-label={config.title || translate('نمودار نقطه‌ای', 'Scatter chart')}
+      >
+        {background}
+        {config.title && (
+          <text x="50" y="9" textAnchor="middle" className="chart-title">
+            {config.title}
+          </text>
+        )}
+        <line x1="14" y1="82" x2="92" y2="82" stroke="#c9ccd8" strokeWidth=".8" />
+        <line x1="14" y1="16" x2="14" y2="82" stroke="#c9ccd8" strokeWidth=".8" />
+        {coords.map((point, index) => (
+          <g key={index}>
+            <circle cx={point.x} cy={point.y} r="2.1" fill={config.color || '#f43f5e'} opacity=".9">
+              <title>{`${labels[index] ?? ''}: ${values[index] ?? 0}`}</title>
+            </circle>
+            <text x={point.x} y={92} textAnchor="middle" className="chart-label">
+              {labels[index] ?? ''}
+            </text>
+          </g>
+        ))}
+      </svg>
+    )
+  }
+
   if (config.kind === 'line' || config.kind === 'area') {
     const coords = values.map((value, index) => ({
       x: 12 + (index / Math.max(1, values.length - 1)) * 78,

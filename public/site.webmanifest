@@ -1,6 +1,6 @@
 {
-  "name": "nivisio",
-  "short_name": "nivisio",
+  "name": "NIVISO",
+  "short_name": "NIVISO",
   "description": "Local-first, bilingual PDF library, reader and notebook.",
   "start_url": "./",
   "display": "standalone",

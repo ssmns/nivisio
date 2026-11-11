@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# nivisio developer control script.
+# NIVISO developer control script.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,7 +13,7 @@ APK_RELEASE="android/app/build/outputs/apk/release/app-release-unsigned.apk"
 
 usage() {
   cat <<'EOF'
-nivisio — مدیریت محیط توسعه و ساخت اپ اندروید
+NIVISO — مدیریت محیط توسعه و ساخت اپ اندروید
 
   ./script.sh setup       نصب وابستگی‌ها، build و آماده‌سازی پروژه اندروید
   ./script.sh dev         اجرای Vite روی پورت 9180
@@ -39,9 +39,9 @@ nivisio — مدیریت محیط توسعه و ساخت اپ اندروید
 EOF
 }
 
-log() { printf '\033[1;35m[nivisio]\033[0m %s\n' "$*"; }
-warn() { printf '\033[1;33m[nivisio]\033[0m %s\n' "$*" >&2; }
-die() { printf '\033[1;31m[nivisio]\033[0m %s\n' "$*" >&2; exit 1; }
+log() { printf '\033[1;35m[NIVISO]\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m[NIVISO]\033[0m %s\n' "$*" >&2; }
+die() { printf '\033[1;31m[NIVISO]\033[0m %s\n' "$*" >&2; exit 1; }
 
 ensure_node() {
   command -v node >/dev/null 2>&1 || die "Node.js نصب نیست. نسخه ۲۰ یا بالاتر لازم است."
@@ -104,7 +104,7 @@ case "${1:-help}" in
     ;;
   dev)
     ensure_deps
-    log "nivisio روی http://127.0.0.1:${PORT}"
+    log "NIVISO روی http://127.0.0.1:${PORT}"
     BNOTE_PORT="$PORT" npm run dev
     ;;
   build)
@@ -159,7 +159,7 @@ case "${1:-help}" in
     npx cap open android
     ;;
   doctor)
-    echo "--- nivisio doctor ---"
+    echo "--- NIVISO doctor ---"
     node -v 2>/dev/null || echo "Node: missing"
     npm -v 2>/dev/null || echo "npm: missing"
     java -version 2>&1 | head -1 || echo "Java: missing"

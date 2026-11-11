@@ -1,6 +1,26 @@
 # Changelog
 
-All notable changes to nivisio are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
+All notable changes to NIVISO are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
+
+## [1.1.5] — 2026-11-11
+
+### Added
+
+- Spiral, heart and diamond shapes.
+- Horizontal bar and scatter chart types.
+- A third reader panel tab, **Assets**, prepared for the future clipart library.
+
+### Changed
+
+- Brand name standardized as **NIVISO** (نی‌ویسیو) across the web app, Android app, manifest, docs and About page.
+- Regenerated web icons, favicons, Android launcher icons and splash screens from the corrected SVG logo.
+- Pen-model dropdown now sits next to the color swatches; highlighter widths sit next to Snap.
+
+### Fixed
+
+- Touch drag-and-drop reordering works in the marks panel.
+
+---
 
 ## [1.1.4] — 2026-11-11
 
@@ -14,7 +34,7 @@ All notable changes to nivisio are documented here. The format follows [Keep a C
 - Pinch zoom is anchored to the point between the fingers; double-tap zooms in and out in select/pan modes.
 - Two-finger drag pans while a drawing tool is active, without leaving stray ink.
 - Area and radar chart types, including PDF export support.
-- Documented the origin of the NIVISIO name in the README, Persian docs and About page.
+- Documented the origin of the NIVISO name in the README, Persian docs and About page.
 
 ### Fixed
 
@@ -129,7 +149,7 @@ All notable changes to nivisio are documented here. The format follows [Keep a C
 
 ### Changed
 
-- Renamed the product from bnote to **nivisio**.
+- Renamed the product from bnote to **NIVISO**.
 - Updated the visual identity: flamingo theme, new logo, favicon and app icons.
 - Split the reader and page layers into smaller components and focused CSS modules.
 - Added a file-size/modularity check to CI-ready scripts.
@@ -148,4 +168,4 @@ All notable changes to nivisio are documented here. The format follows [Keep a C
 
 ## نسخهٔ ۱.۰.۰ — ۱۱ نوامبر ۲۰۲۶
 
-نسخهٔ اولیهٔ nivisio با کتابخانهٔ PDF محلی، خوانندهٔ تک‌صفحه/دو صفحه/پیوسته، ابزارهای حاشیه‌نویسی و طراحی، شکل‌ها، خط‌کش/گونیا/نقاله، اسنپ وابسته به گرید، یادداشت‌های مستقل، ۱۲ قالب، خروجی PDF مسطح، رابط دوزبانه، آیکون‌های اندروید و معماری کاملاً آفلاین منتشر شد.
+نسخهٔ اولیهٔ NIVISO با کتابخانهٔ PDF محلی، خوانندهٔ تک‌صفحه/دو صفحه/پیوسته، ابزارهای حاشیه‌نویسی و طراحی، شکل‌ها، خط‌کش/گونیا/نقاله، اسنپ وابسته به گرید، یادداشت‌های مستقل، ۱۲ قالب، خروجی PDF مسطح، رابط دوزبانه، آیکون‌های اندروید و معماری کاملاً آفلاین منتشر شد.

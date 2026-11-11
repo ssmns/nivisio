@@ -2,7 +2,7 @@
 
 ## Our pledge
 
-We want nivisio to be a welcoming project for everyone, regardless of experience, identity, language, disability, appearance, ethnicity, religion or technical background. We pledge to make participation harassment-free and respectful.
+We want NIVISO to be a welcoming project for everyone, regardless of experience, identity, language, disability, appearance, ethnicity, religion or technical background. We pledge to make participation harassment-free and respectful.
 
 ## Expected behavior
 
@@ -37,6 +37,6 @@ This code is inspired by the [Contributor Covenant](https://www.contributor-cove
 
 ## آیین‌نامهٔ رفتاری (فارسی)
 
-nivisio می‌خواهد فضایی محترمانه و پذیرا برای همه باشد. مهربان و سازنده باشید، به کار یکدیگر احترام بگذارید، بازخورد را دربارهٔ کار بدهید نه شخص، و به زبان‌ها و خطوط مختلف احترام بگذارید.
+NIVISO می‌خواهد فضایی محترمانه و پذیرا برای همه باشد. مهربان و سازنده باشید، به کار یکدیگر احترام بگذارید، بازخورد را دربارهٔ کار بدهید نه شخص، و به زبان‌ها و خطوط مختلف احترام بگذارید.
 
 آزار، توهین، تهدید، تبعیض، انتشار اطلاعات خصوصی و اختلال پایدار در بحث‌ها پذیرفته نیست. موارد را به‌صورت خصوصی به نگه‌دارندگان پروژه گزارش دهید. نگه‌دارندگان می‌توانند بحث را ببندند، مشارکت را رد کنند یا دسترسی را محدود کنند.

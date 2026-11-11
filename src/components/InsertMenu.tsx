@@ -109,7 +109,7 @@ export function InsertMenu({ onImage, onChart, onLink, onNote, onShape, onGuide,
             <BarChart3 size={16} />
             <span>
               <strong>{t('نمودار', 'Chart')}</strong>
-              <em>{t('میله‌ای، خطی، سطحی، دایره‌ای یا راداری', 'Bar, line, area, pie or radar')}</em>
+              <em>{t('میله‌ای، افقی، خطی، سطحی، نقطه‌ای، دایره‌ای یا راداری', 'Bar, horizontal, line, area, scatter, pie or radar')}</em>
             </span>
           </button>
           <button type="button" onClick={() => choose(onLink)}>

@@ -1,7 +1,8 @@
-import { Highlighter, Info, X } from 'lucide-react'
+import { Highlighter, Info, LibraryBig, X } from 'lucide-react'
 import type { Annotation, BnoteDocument, LogicalPage } from '../../lib/types'
 import { useI18n } from '../../lib/i18n'
 import { AnnotationsPanel } from '../AnnotationsPanel'
+import { ReaderAssetsPanel } from './ReaderAssetsPanel'
 import { ReaderInfoPanel } from './ReaderInfoPanel'
 
 interface ReaderPanelProps {
@@ -9,7 +10,7 @@ interface ReaderPanelProps {
   pages: LogicalPage[]
   annotations: Annotation[]
   currentKey: string
-  panelTab: 'notes' | 'info'
+  panelTab: 'notes' | 'info' | 'assets'
   selectedId: string | null
   collectionName?: string
   pageSizeName: string
@@ -18,7 +19,7 @@ interface ReaderPanelProps {
   bookmarkIndex: number
   exporting: { done: number; total: number } | null
   pdfReady: boolean
-  onTab: (tab: 'notes' | 'info') => void
+  onTab: (tab: 'notes' | 'info' | 'assets') => void
   onClose: () => void
   onSelect: (annotation: Annotation) => void
   onEdit: (annotation: Annotation) => void
@@ -77,6 +78,14 @@ export function ReaderPanel({
         </button>
         <button
           type="button"
+          className={panelTab === 'assets' ? 'is-active' : ''}
+          onClick={() => onTab('assets')}
+        >
+          <LibraryBig size={15} />
+          {t('دارایی‌ها', 'Assets')}
+        </button>
+        <button
+          type="button"
           className="panel-close"
           onClick={onClose}
           aria-label={t('بستن پنل', 'Close panel')}
@@ -98,6 +107,8 @@ export function ReaderPanel({
           onUpdate={onUpdate}
           onReorder={onReorder}
         />
+      ) : panelTab === 'assets' ? (
+        <ReaderAssetsPanel />
       ) : (
         <ReaderInfoPanel
           doc={doc}

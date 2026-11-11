@@ -133,7 +133,7 @@ export function AboutPage() {
         >
           <img className="brand-mark brand-mark--logo" src="/icon-192.png" alt="" />
           <span>
-            <strong>nivisio</strong>
+            <strong>NIVISO</strong>
             <em>{t('درباره محصول و توسعه‌دهندگان', 'Product & developers')}</em>
           </span>
         </button>
@@ -164,7 +164,7 @@ export function AboutPage() {
               <span>{t('همه‌چیز روی دستگاه خودت.', 'everything on your device.')}</span>
             </h1>
             <p>
-              {t('nivisio یک کتابخانه و دفتر یادداشت PDF است: قلم و مداد و هایلایتر، نوار چسب، لاسو، متن فارسی، تصویر، نمودار و پیوند — به‌همراه برگه‌های یادداشت با گرید دلخواه بین صفحات. بدون حساب کاربری، بدون سرور و بدون ارسال داده.', 'nivisio is a PDF library and notebook: pen, pencil and highlighter, tape, lasso, Persian/English text, images, charts and links — plus note pages with custom grids between PDF pages. No account, no server, no data upload.')}
+              {t('نی‌ویسیو یک کتابخانه و دفتر یادداشت PDF است: قلم و مداد و هایلایتر، نوار چسب، لاسو، متن فارسی، تصویر، نمودار و پیوند — به‌همراه برگه‌های یادداشت با گرید دلخواه بین صفحات. بدون حساب کاربری، بدون سرور و بدون ارسال داده.', 'NIVISO is a PDF library and notebook: pen, pencil and highlighter, tape, lasso, Persian/English text, images, charts and links — plus note pages with custom grids between PDF pages. No account, no server, no data upload.')}
             </p>
             <div className="about-hero__actions">
               <button type="button" className="btn btn--primary btn--lg" onClick={() => navigate('/')}>
@@ -190,7 +190,7 @@ export function AboutPage() {
           <div className="about-hero__art">
             <img
               src="/showcase/notebook.png"
-              alt={t('محیط مطالعه و ابزارهای nivisio', 'nivisio reader and tools')}
+              alt={t('محیط مطالعه و ابزارهای نی‌ویسیو', 'NIVISO reader and tools')}
             />
             <span className="about-float about-float--privacy">
               <ShieldCheck size={16} />
@@ -206,11 +206,11 @@ export function AboutPage() {
         <section className="about-section">
           <div className="about-section__head">
             <span className="eyebrow">{t('نام', 'The name')}</span>
-            <h2>NIVISIO · {t('نیویسیو (Niviso)', 'Niviso')}</h2>
+            <h2>{t('نی‌ویسیو', 'NIVISO')}</h2>
             <p>
               {t(
-                'NIVISIO از ریشهٔ باستانی «نیویسدن / نبشتن» (پهلوی: niwīstan) به معنای نوشتن و کتابت گرفته شده است؛ نامی توصیف‌گر برای ابزار یادداشت‌برداری و مدیریت اسناد که با هویت مدرن و لوگوی اپ هماهنگ است.',
-                'NIVISIO comes from the ancient Persian root “niwīstan” (نیویسدن / نبشتن; Middle Persian: niwīstan), meaning to write and inscribe. The name describes a note-taking and document tool while matching the app’s modern identity and logo.',
+                'نی‌ویسیو از ریشهٔ باستانی «نیویسدن / نبشتن» (پهلوی: niwīstan) به معنای نوشتن و کتابت گرفته شده است؛ نامی توصیف‌گر برای ابزار یادداشت‌برداری و مدیریت اسناد که با هویت مدرن و لوگوی اپ هماهنگ است.',
+                'NIVISO comes from the ancient Persian root “niwīstan” (نیویسدن / نبشتن; Middle Persian: niwīstan), meaning to write and inscribe. The name describes a note-taking and document tool while matching the app’s modern identity and logo.',
               )}
             </p>
           </div>
@@ -275,7 +275,7 @@ export function AboutPage() {
             <span className="eyebrow">{t('برای توسعه‌دهندگان', 'For developers')}</span>
             <h2>{t('معماری ساده و قابل نگهداشت', 'Simple, maintainable architecture')}</h2>
             <p>
-              {t('nivisio یک اپ تک‌صفحه‌ای React است که همه داده‌ها را در IndexedDB نگه می‌دارد. PDF.js رندر و لایه متن را می‌سازد و Capacitor همان باندل را در WebView اندروید اجرا می‌کند. بک‌اند، دیتابیس سروری و API بیرونی وجود ندارد.', 'nivisio is a React SPA that keeps all data in IndexedDB. PDF.js handles rendering and the text layer, while Capacitor runs the same bundle in an Android WebView. There is no backend, server database or external API.')}
+              {t('نی‌ویسیو یک اپ تک‌صفحه‌ای React است که همه داده‌ها را در IndexedDB نگه می‌دارد. PDF.js رندر و لایه متن را می‌سازد و Capacitor همان باندل را در WebView اندروید اجرا می‌کند. بک‌اند، دیتابیس سروری و API بیرونی وجود ندارد.', 'NIVISO is a React SPA that keeps all data in IndexedDB. PDF.js handles rendering and the text layer, while Capacitor runs the same bundle in an Android WebView. There is no backend, server database or external API.')}
             </p>
             <div className="about-stack">
               {[
@@ -364,7 +364,7 @@ export function AboutPage() {
 
         <section className="about-maker">
           <div className="about-maker__logo">
-            <img src="/logo-full.png" alt="nivisio" />
+            <img src="/logo-full.png" alt="NIVISO" />
           </div>
           <div className="about-maker__copy">
             <span className="eyebrow">{t('توسعه‌دهنده', 'Developer')}</span>
@@ -372,8 +372,8 @@ export function AboutPage() {
             <h2>{t('جادو استودیو', 'Jadoo Studio')}</h2>
             <p>
               {t(
-                'طراحی محصول، مهندسی و توسعهٔ nivisio توسط جادو استودیو انجام شده است.',
-                'Product design, engineering and development for nivisio by Jadoo Studio.',
+                'طراحی محصول، مهندسی و توسعهٔ نی‌ویسیو توسط جادو استودیو انجام شده است.',
+                'Product design, engineering and development for NIVISO by Jadoo Studio.',
               )}
             </p>
             <p className="about-maker__meta">
@@ -479,7 +479,7 @@ export function AboutPage() {
       </main>
 
       <footer className="about__footer">
-        <span>{t('nivisio · نسخه ۱.۱.۴ · ساختهٔ جادو استودیو', 'nivisio · v1.1.4 · by Jadoo Studio')}</span>
+        <span>{t('نی‌ویسیو · نسخه ۱.۱.۵ · ساختهٔ جادو استودیو', 'NIVISO · v1.1.5 · by Jadoo Studio')}</span>
         <span>
           <Search size={13} /> {t('ساخته‌شده با React، PDF.js، Dexie و Capacitor', 'Built with React, PDF.js, Dexie and Capacitor')}
         </span>

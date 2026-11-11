@@ -50,6 +50,12 @@
   position: relative;
   flex: none;
 }
+.color-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
 .popover {
   position: absolute;
   top: calc(100% + 7px);

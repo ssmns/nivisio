@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">nivisio</string>
-    <string name="title_activity_main">nivisio</string>
+    <string name="app_name">NIVISO</string>
+    <string name="title_activity_main">NIVISO</string>
     <string name="package_name">nivisio.jadoo</string>
     <string name="custom_url_scheme">nivisio.jadoo</string>
 </resources>

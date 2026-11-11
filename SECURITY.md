@@ -20,7 +20,7 @@ We aim to acknowledge reports within a few days and to publish a fix and advisor
 
 ## Scope
 
-nivisio is a local-first app with no backend. Relevant reports include:
+NIVISO is a local-first app with no backend. Relevant reports include:
 
 - script injection or unsafe HTML rendering,
 - unsafe external-link handling,
@@ -40,6 +40,6 @@ nivisio is a local-first app with no backend. Relevant reports include:
 
 برای گزارش آسیب‌پذیری، Issue عمومی باز نکنید. از مسیر **Security → Advisories → Report a vulnerability** در GitHub استفاده کنید و توضیح، مراحل بازتولید، نسخهٔ تحت تأثیر و اصلاح پیشنهادی را بنویسید.
 
-nivisio بک‌اند ندارد؛ گزارش‌های مربوط به تزریق اسکریپت، رندر ناامن HTML، مدیریت ناامن لینک خارجی، درخواست شبکهٔ ناخواسته، نشت داده یا آسیب‌پذیری مؤثر وابستگی‌ها در محدودهٔ بررسی هستند.
+NIVISO بک‌اند ندارد؛ گزارش‌های مربوط به تزریق اسکریپت، رندر ناامن HTML، مدیریت ناامن لینک خارجی، درخواست شبکهٔ ناخواسته، نشت داده یا آسیب‌پذیری مؤثر وابستگی‌ها در محدودهٔ بررسی هستند.
 
 از گزارش آسیب‌پذیری‌ها سپاسگزاریم و تلاش می‌کنیم در چند روز اول پاسخ دهیم.

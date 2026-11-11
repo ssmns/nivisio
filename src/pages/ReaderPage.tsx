@@ -124,7 +124,7 @@ export function ReaderPage() {
   const [pendingChart, setPendingChart] = useState<ChartConfig | null>(null)
   const [pendingImage, setPendingImage] = useState<{ data: string; aspect: number } | null>(null)
   const [panelOpen, setPanelOpen] = useState(() => window.innerWidth >= 1080)
-  const [panelTab, setPanelTab] = useState<'notes' | 'info'>('notes')
+  const [panelTab, setPanelTab] = useState<'notes' | 'info' | 'assets'>('notes')
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const {
     viewMode,

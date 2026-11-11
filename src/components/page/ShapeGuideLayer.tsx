@@ -7,6 +7,7 @@ import {
   curveMidpoint,
   isLineShape,
   shapeEndpoints,
+  spiralPoints,
 } from '../../lib/shapes'
 import type { ShapePreview } from '../../hooks/useShapeEndpoints'
 import { translate } from '../../lib/lang'
@@ -46,6 +47,20 @@ function scalePoints(points: string, width: number, height: number): string {
       return `${(x / 100) * width},${(y / 100) * height}`
     })
     .join(' ')
+}
+
+function heartPath(width: number, height: number): string {
+  const px = (x: number) => (x / 100) * width
+  const py = (y: number) => (y / 100) * height
+  return [
+    `M ${px(50)} ${py(88)}`,
+    `C ${px(20)} ${py(64)} ${px(4)} ${py(42)} ${px(4)} ${py(26)}`,
+    `C ${px(4)} ${py(10)} ${px(16)} ${py(4)} ${px(28)} ${py(4)}`,
+    `C ${px(38)} ${py(4)} ${px(46)} ${py(10)} ${px(50)} ${py(20)}`,
+    `C ${px(54)} ${py(10)} ${px(62)} ${py(4)} ${px(72)} ${py(4)}`,
+    `C ${px(84)} ${py(4)} ${px(96)} ${py(10)} ${px(96)} ${py(26)}`,
+    `C ${px(96)} ${py(42)} ${px(80)} ${py(64)} ${px(50)} ${py(88)} Z`,
+  ].join(' ')
 }
 
 export function ShapeGuideLayer({
@@ -137,6 +152,7 @@ export function ShapeGuideLayer({
           config.kind === 'bezier-arrow'
             ? bezierControls(p1, p2, config.bend1 ?? 0.35, config.bend2 ?? 0.35)
             : null
+        const spiral = config.kind === 'spiral' ? spiralPoints(width, height) : null
         const inset = stroke / 2 + 1
         return (
           <div
@@ -262,6 +278,37 @@ export function ShapeGuideLayer({
                   fillOpacity={filled ? 0.18 : 0}
                   stroke={color}
                   strokeWidth={stroke}
+                />
+              )}
+              {config.kind === 'diamond' && (
+                <polygon
+                  points={scalePoints('50,2 98,50 50,98 2,50', width, height)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                />
+              )}
+              {config.kind === 'heart' && (
+                <path
+                  d={heartPath(width, height)}
+                  fill={filled ? color : 'none'}
+                  fillOpacity={filled ? 0.18 : 0}
+                  stroke={color}
+                  strokeWidth={stroke}
+                  strokeLinejoin="round"
+                />
+              )}
+              {spiral && (
+                <path
+                  d={spiral
+                    .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+                    .join(' ')}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={stroke}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               )}
             </svg>

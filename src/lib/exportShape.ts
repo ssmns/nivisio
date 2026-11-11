@@ -1,5 +1,5 @@
 import type { Annotation } from './types'
-import { bezierControls, curveControlPoint, shapeEndpoints } from './shapes'
+import { bezierControls, curveControlPoint, shapeEndpoints, spiralPoints } from './shapes'
 
 interface PxRect {
   x: number
@@ -90,6 +90,47 @@ export function drawShapeAnnotation(
       ctx.fill()
       ctx.globalAlpha = 1
     }
+    ctx.stroke()
+  } else if (config.kind === 'diamond') {
+    ctx.beginPath()
+    ctx.moveTo(0, -r.h / 2)
+    ctx.lineTo(r.w / 2, 0)
+    ctx.lineTo(0, r.h / 2)
+    ctx.lineTo(-r.w / 2, 0)
+    ctx.closePath()
+    if (config.filled) {
+      ctx.globalAlpha = 0.18
+      ctx.fill()
+      ctx.globalAlpha = 1
+    }
+    ctx.stroke()
+  } else if (config.kind === 'heart') {
+    const px = (value: number) => (value / 100 - 0.5) * r.w
+    const py = (value: number) => (value / 100 - 0.5) * r.h
+    ctx.beginPath()
+    ctx.moveTo(px(50), py(88))
+    ctx.bezierCurveTo(px(20), py(64), px(4), py(42), px(4), py(26))
+    ctx.bezierCurveTo(px(4), py(10), px(16), py(4), px(28), py(4))
+    ctx.bezierCurveTo(px(38), py(4), px(46), py(10), px(50), py(20))
+    ctx.bezierCurveTo(px(54), py(10), px(62), py(4), px(72), py(4))
+    ctx.bezierCurveTo(px(84), py(4), px(96), py(10), px(96), py(26))
+    ctx.bezierCurveTo(px(96), py(42), px(80), py(64), px(50), py(88))
+    ctx.closePath()
+    if (config.filled) {
+      ctx.globalAlpha = 0.18
+      ctx.fill()
+      ctx.globalAlpha = 1
+    }
+    ctx.stroke()
+  } else if (config.kind === 'spiral') {
+    const points = spiralPoints(r.w, r.h)
+    ctx.beginPath()
+    points.forEach((point, index) => {
+      const x = point.x - r.w / 2
+      const y = point.y - r.h / 2
+      if (index === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    })
     ctx.stroke()
   } else {
     const count = Math.max(3, Math.min(24, config.sides ?? 5))

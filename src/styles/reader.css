@@ -761,6 +761,9 @@
 .reader--icons .page-dock .view-menu__trigger span {
   display: none;
 }
+.reader--icons .reader__toolbar .tool-btn--pen span {
+  display: inline;
+}
 @media (max-width: 720px) {
   .reader--labels .reader__toolbar .tool-btn span,
   .reader--labels .reader__toolbar .marker-widths button span {

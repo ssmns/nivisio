@@ -1,7 +1,7 @@
-# nivisio
+# NIVISO
 
 <p align="center">
-  <img src="./docs/logo-full-light.png" alt="nivisio" width="560" />
+  <img src="./docs/logo-full-light.png" alt="NIVISO" width="560" />
 </p>
 
 <p align="center">
@@ -29,7 +29,7 @@
 
 ## The name
 
-**NIVISIO** (نیویسیو, also read **Niviso**) comes from the ancient Persian root
+**NIVISO** (نی‌ویسیو) comes from the ancient Persian root
 *niwīstan* / *niwīsidan* (نیویسدن، نبشتن; Middle Persian: *niwīstan*), meaning **to
 write and inscribe**. The name describes a note-taking and document tool while
 matching the modern Android app identity and logo.
@@ -47,9 +47,9 @@ matching the modern Android app identity and logo.
 - Pen, pencil, soft brush, fountain pen, dashed pen and marker with stylus pressure.
 - Text highlighting, freehand highlighter, tape, eraser and lasso.
 - Movable, resizable and rotatable text, images (transparent PNG/WebP), charts, tape and shapes.
-- Shapes: line, arrow, curved arrow, Bézier arrow, rectangle, ellipse, circle, triangle, polygon and star with custom point count; every kind has an icon in the picker.
+- Shapes: line, arrow, curved arrow, Bézier arrow, rectangle, ellipse, circle, triangle, polygon, star, spiral, heart and diamond with custom point count; every kind has an icon in the picker.
 - Lines and arrows are defined by two draggable endpoints; curved and Bézier arrows also expose bend handles.
-- Charts: bar, line, area, pie and radar with editable labels, values, colors and backgrounds.
+- Charts: bar, horizontal bar, line, area, scatter, pie and radar with editable labels, values, colors and backgrounds.
 - Measuring guides: ruler, set square and protractor, with guide-edge snapping.
 - Grid-aware snapping: ruled, grid, dotted, graph, isometric, true 30–60 and circular paper.
 - Straight lines with 15° angle snapping.
@@ -67,11 +67,11 @@ matching the modern Android app identity and logo.
 
 | Library | Reader |
 | --- | --- |
-| <img src="./docs/screenshots/library-light.png" alt="nivisio library" /> | <img src="./docs/screenshots/reader-light.png" alt="nivisio reader" /> |
+| <img src="./docs/screenshots/library-light.png" alt="NIVISO library" /> | <img src="./docs/screenshots/reader-light.png" alt="NIVISO reader" /> |
 
 | Note tools | About |
 | --- | --- |
-| <img src="./docs/screenshots/notebook-tools.png" alt="Note tools" /> | <img src="./docs/screenshots/about.png" alt="About nivisio" /> |
+| <img src="./docs/screenshots/notebook-tools.png" alt="Note tools" /> | <img src="./docs/screenshots/about.png" alt="About NIVISO" /> |
 
 <p align="center">
   <img src="./docs/screenshots/templates.png" alt="Note templates" width="78%" />
@@ -139,11 +139,11 @@ To build a debug APK:
 
 Requirements: **JDK 17** and **Android SDK Platform 34 + Build-Tools 34**. If the SDK is incomplete, `./script.sh doctor` explains what is missing.
 
-The launcher icon, adaptive icon (including monochrome), splash screens and app name use the nivisio brand assets in `public/` and `android/app/src/main/res/`.
+The launcher icon, adaptive icon (including monochrome), splash screens and app name use the NIVISO brand assets in `public/` and `android/app/src/main/res/`.
 
 ## Privacy
 
-nivisio is offline by design:
+NIVISO is offline by design:
 
 - PDFs, highlights, notes and images stay in IndexedDB on your device.
 - There is no account, server, database or telemetry.
@@ -198,7 +198,7 @@ Contributions are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) and 
 ## Developer
 
 <p align="left">
-  <img src="./docs/logo-full-light.png" alt="nivisio" width="320" />
+  <img src="./docs/logo-full-light.png" alt="NIVISO" width="320" />
 </p>
 <p align="left">
   <img src="./docs/jadoo-studio.png" alt="Jadoo Studio" width="300" />

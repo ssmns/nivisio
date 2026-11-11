@@ -140,6 +140,29 @@ export function drawChartOnCanvas(
 
   ctx.strokeStyle = '#c9ccd8'
   ctx.lineWidth = Math.max(1, width * 0.0015)
+
+  if (config.kind === 'hbar') {
+    const rowHeight = plotHeight / Math.max(1, values.length)
+    const barHeight = rowHeight * 0.56
+    const labelSize = Math.max(8, width * 0.02)
+    ctx.font = `400 ${labelSize}px Vazirmatn, Tahoma, sans-serif`
+    ctx.textAlign = 'right'
+    values.forEach((value, index) => {
+      const barWidth = (value / max) * plotWidth
+      const py = top + index * rowHeight + (rowHeight - barHeight) / 2
+      ctx.fillStyle = config.color || COLORS[index % COLORS.length]
+      ctx.fillRect(left, py, barWidth, barHeight)
+      ctx.fillStyle = '#55576a'
+      ctx.fillText(labels[index] ?? '', left - 4, py + barHeight * 0.72)
+    })
+    ctx.beginPath()
+    ctx.moveTo(left, top)
+    ctx.lineTo(left, baseY)
+    ctx.stroke()
+    ctx.restore()
+    return
+  }
+
   ctx.beginPath()
   ctx.moveTo(left, top)
   ctx.lineTo(left, baseY)
@@ -150,7 +173,7 @@ export function drawChartOnCanvas(
   ctx.font = `400 ${labelSize}px Vazirmatn, Tahoma, sans-serif`
   ctx.textAlign = 'center'
 
-  if (config.kind === 'line' || config.kind === 'area') {
+  if (config.kind === 'line' || config.kind === 'area' || config.kind === 'scatter') {
     if (config.kind === 'area') {
       ctx.beginPath()
       values.forEach((value, index) => {
@@ -167,28 +190,32 @@ export function drawChartOnCanvas(
       ctx.fill()
       ctx.globalAlpha = 1
     }
-    ctx.beginPath()
-    values.forEach((value, index) => {
-      const px = left + (index / Math.max(1, values.length - 1)) * plotWidth
-      const py = baseY - (value / max) * plotHeight
-      if (index === 0) ctx.moveTo(px, py)
-      else ctx.lineTo(px, py)
-    })
-    ctx.strokeStyle = config.color || COLORS[0]
-    ctx.lineWidth = Math.max(2, width * 0.006)
-    ctx.lineJoin = 'round'
-    ctx.lineCap = 'round'
-    ctx.stroke()
+    if (config.kind !== 'scatter') {
+      ctx.beginPath()
+      values.forEach((value, index) => {
+        const px = left + (index / Math.max(1, values.length - 1)) * plotWidth
+        const py = baseY - (value / max) * plotHeight
+        if (index === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      })
+      ctx.strokeStyle = config.color || COLORS[0]
+      ctx.lineWidth = Math.max(2, width * 0.006)
+      ctx.lineJoin = 'round'
+      ctx.lineCap = 'round'
+      ctx.stroke()
+    }
     values.forEach((value, index) => {
       const px = left + (index / Math.max(1, values.length - 1)) * plotWidth
       const py = baseY - (value / max) * plotHeight
       ctx.beginPath()
       ctx.arc(px, py, Math.max(2, width * 0.007), 0, Math.PI * 2)
-      ctx.fillStyle = '#fff'
+      ctx.fillStyle = config.kind === 'scatter' ? config.color || COLORS[0] : '#fff'
       ctx.fill()
-      ctx.strokeStyle = config.color || COLORS[0]
-      ctx.lineWidth = Math.max(1.5, width * 0.003)
-      ctx.stroke()
+      if (config.kind !== 'scatter') {
+        ctx.strokeStyle = config.color || COLORS[0]
+        ctx.lineWidth = Math.max(1.5, width * 0.003)
+        ctx.stroke()
+      }
       ctx.fillStyle = '#55576a'
       ctx.fillText(labels[index] ?? '', px, baseY + labelSize * 1.8)
     })
