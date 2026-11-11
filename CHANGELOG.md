@@ -2,6 +2,14 @@
 
 All notable changes to nivisio are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.3] — 2026-11-12
+
+### Fixed
+
+- Pen-model menu is now fixed-positioned and stays inside the mobile viewport in both Persian and English.
+
+---
+
 ## [1.1.2] — 2026-11-12
 
 ### Fixed

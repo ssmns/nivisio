@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronDown, Highlighter, PenLine } from 'lucide-react'
 import { PEN_MODELS, PEN_WIDTHS, type PenStyle } from '../lib/types'
 import { useI18n } from '../lib/i18n'
@@ -14,6 +14,13 @@ interface PenPickerProps {
 export function PenPicker({ value, widthScale, onChange, onWidthChange }: PenPickerProps) {
   const { lang, t } = useI18n()
   const [open, setOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const [position, setPosition] = useState<{
+    left: number
+    top: number
+    width: number
+    maxHeight: number
+  } | null>(null)
   const selected = PEN_MODELS.find((model) => model.id === value) ?? PEN_MODELS[0]
 
   useEffect(() => {
@@ -28,9 +35,36 @@ export function PenPicker({ value, widthScale, onChange, onWidthChange }: PenPic
     }
   }, [open])
 
+  useLayoutEffect(() => {
+    if (!open) {
+      setPosition(null)
+      return
+    }
+    const update = () => {
+      const rect = triggerRef.current?.getBoundingClientRect()
+      if (!rect) return
+      const width = Math.min(320, window.innerWidth - 24)
+      const left = Math.min(
+        Math.max(12, rect.left + rect.width / 2 - width / 2),
+        window.innerWidth - width - 12,
+      )
+      const top = rect.bottom + 8
+      setPosition({
+        left,
+        top,
+        width,
+        maxHeight: Math.max(160, window.innerHeight - top - 12),
+      })
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [open])
+
   return (
     <div className="pen-picker" onPointerDown={(event) => event.stopPropagation()}>
       <button
+        ref={triggerRef}
         type="button"
         className={`tool-btn tool-btn--pen${open ? ' is-active' : ''}`}
         onClick={() => setOpen((current) => !current)}
@@ -41,7 +75,25 @@ export function PenPicker({ value, widthScale, onChange, onWidthChange }: PenPic
         <ChevronDown size={13} />
       </button>
       {open && (
-        <div className="popover pen-menu">
+        <div
+          className="popover pen-menu"
+          style={
+            position
+              ? {
+                  position: 'fixed',
+                  top: position.top,
+                  left: position.left,
+                  right: 'auto',
+                  bottom: 'auto',
+                  width: position.width,
+                  minWidth: position.width,
+                  maxHeight: position.maxHeight,
+                  overflowY: 'auto',
+                  zIndex: 90,
+                }
+              : { visibility: 'hidden' }
+          }
+        >
           <div className="popover__title">{t('مدل قلم', 'Pen model')}</div>
           <div className="pen-menu__list">
             {PEN_MODELS.map((model) => (
