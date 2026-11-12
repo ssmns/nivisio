@@ -29,7 +29,7 @@
 
 ## The name
 
-**NIVISO** (نی‌ویسیو) comes from the ancient Persian root
+**NIVISO** (نی‌ویسو) comes from the ancient Persian root
 *niwīstan* / *niwīsidan* (نیویسدن، نبشتن; Middle Persian: *niwīstan*), meaning **to
 write and inscribe**. The name describes a note-taking and document tool while
 matching the modern Android app identity and logo.

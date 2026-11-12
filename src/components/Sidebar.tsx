@@ -260,7 +260,7 @@ export function Sidebar({
             }}
           >
             <Info size={15} />
-            {t('درباره نی‌ویسیو و توسعه‌دهندگان', 'About NIVISO & developers')}
+            {t('درباره نی‌ویسو و توسعه‌دهندگان', 'About NIVISO & developers')}
           </button>
           <div className="theme-switch" role="group" aria-label={t('پوسته', 'Theme')}>
             <button

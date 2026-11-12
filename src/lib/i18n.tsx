@@ -45,14 +45,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr'
     document.documentElement.dataset.lang = lang
     document.title =
-      lang === 'en' ? 'NIVISO — PDF library & notes' : 'نی‌ویسیو — کتابخانه PDF'
+      lang === 'en' ? 'NIVISO — PDF library & notes' : 'نی‌ویسو — کتابخانه PDF'
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute(
         'content',
         lang === 'en'
           ? 'NIVISO — local-first PDF library, reader, annotation and notebook app.'
-          : 'نی‌ویسیو — کتابخانه، مطالعه و حاشیه‌نویسی PDF؛ آفلاین و روی دستگاه.',
+          : 'نی‌ویسو — کتابخانه، مطالعه و حاشیه‌نویسی PDF؛ آفلاین و روی دستگاه.',
       )
   }, [lang])
 

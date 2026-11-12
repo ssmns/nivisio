@@ -12,7 +12,7 @@ All notable changes to NIVISO are documented here. The format follows [Keep a Ch
 
 ### Changed
 
-- Brand name standardized as **NIVISO** (نی‌ویسیو) across the web app, Android app, manifest, docs and About page.
+- Brand name standardized as **NIVISO** (نی‌ویسو) across the web app, Android app, manifest, docs and About page.
 - Regenerated web icons, favicons, Android launcher icons and splash screens from the corrected SVG logo.
 - Pen-model dropdown now sits next to the color swatches; highlighter widths sit next to Snap.
 

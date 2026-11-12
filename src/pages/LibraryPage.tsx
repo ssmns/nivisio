@@ -190,7 +190,7 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
       const response = await fetch(`${import.meta.env.BASE_URL}samples/nivisio-guide.pdf`)
       if (!response.ok) throw new Error('not found')
       const blob = await response.blob()
-      const file = new File([blob], t('راهنمای نی‌ویسیو.pdf', 'NIVISO guide.pdf'), { type: 'application/pdf' })
+      const file = new File([blob], t('راهنمای نی‌ویسو.pdf', 'NIVISO guide.pdf'), { type: 'application/pdf' })
       await runImport([file])
     } catch {
       toast.show(t('فایل نمونه در دسترس نیست.', 'Sample file is not available.'), { tone: 'error' })
@@ -429,7 +429,7 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
                   <Sparkles size={20} />
                 </span>
               </div>
-              <h2>{t('اولین سند خود را به نی‌ویسیو بیاورید', 'Bring your first document to NIVISO')}</h2>
+              <h2>{t('اولین سند خود را به نی‌ویسو بیاورید', 'Bring your first document to NIVISO')}</h2>
               <p>
                 {t(
                   'PDF اضافه کنید یا یک یادداشت مستقل با اندازه و گرید دلخواه بسازید. همه فایل‌ها، پیشرفت مطالعه و هایلایت‌ها فقط روی همین دستگاه می‌مانند.',

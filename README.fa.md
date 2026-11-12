@@ -1,9 +1,9 @@
 <div dir="rtl">
 
-# نی‌ویسیو (NIVISO)
+# نی‌ویسو (NIVISO)
 
 <p align="center">
-  <img src="./docs/logo-full-light.png" alt="نی‌ویسیو" width="560" />
+  <img src="./docs/logo-full-light.png" alt="نی‌ویسو" width="560" />
 </p>
 
 <p align="center">
@@ -61,11 +61,11 @@
 
 | کتابخانه | خواننده |
 | --- | --- |
-| <img src="./docs/screenshots/library-light.png" alt="کتابخانهٔ نی‌ویسیو" /> | <img src="./docs/screenshots/reader-light.png" alt="خوانندهٔ نی‌ویسیو" /> |
+| <img src="./docs/screenshots/library-light.png" alt="کتابخانهٔ نی‌ویسو" /> | <img src="./docs/screenshots/reader-light.png" alt="خوانندهٔ نی‌ویسو" /> |
 
 | ابزارهای یادداشت | درباره |
 | --- | --- |
-| <img src="./docs/screenshots/notebook-tools.png" alt="ابزارهای یادداشت" /> | <img src="./docs/screenshots/about.png" alt="دربارهٔ نی‌ویسیو" /> |
+| <img src="./docs/screenshots/notebook-tools.png" alt="ابزارهای یادداشت" /> | <img src="./docs/screenshots/about.png" alt="دربارهٔ نی‌ویسو" /> |
 
 <p align="center">
   <img src="./docs/screenshots/templates.png" alt="قالب‌های یادداشت" width="78%" />
@@ -133,11 +133,11 @@ npx cap sync android
 
 پیش‌نیاز: **JDK 17** و **Android SDK Platform 34 + Build-Tools 34**. اگر SDK کامل نباشد، `./script.sh doctor` موارد کم را نشان می‌دهد.
 
-آیکون لانچر، آیکون adaptive (شامل monochrome)، تصاویر Splash و نام اپ از دارایی‌های برند نی‌ویسیو در `public/` و `android/app/src/main/res/` استفاده می‌کنند.
+آیکون لانچر، آیکون adaptive (شامل monochrome)، تصاویر Splash و نام اپ از دارایی‌های برند نی‌ویسو در `public/` و `android/app/src/main/res/` استفاده می‌کنند.
 
 ## حریم خصوصی
 
-نی‌ویسیو از ابتدا آفلاین طراحی شده است:
+نی‌ویسو از ابتدا آفلاین طراحی شده است:
 
 - PDFها، هایلایت‌ها، یادداشت‌ها و تصویرها در IndexedDB روی دستگاه می‌مانند.
 - حساب کاربری، سرور، دیتابیس یا تلمتری وجود ندارد.
@@ -192,7 +192,7 @@ nivisio/
 ## توسعه‌دهنده
 
 <p align="right">
-  <img src="./docs/logo-full-light.png" alt="نی‌ویسیو" width="320" />
+  <img src="./docs/logo-full-light.png" alt="نی‌ویسو" width="320" />
 </p>
 <p align="right">
   <img src="./docs/jadoo-studio.png" alt="Jadoo Studio" width="300" />
