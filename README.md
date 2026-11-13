@@ -2,8 +2,8 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo-full-dark.png" />
-    <img src="./docs/logo-full-light.png" alt="NIVISO" width="620" />
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo-main-dark.png" />
+    <img src="./docs/logo-main-light.png" alt="NIVISO" width="620" />
   </picture>
 </p>
 
