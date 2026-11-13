@@ -13,8 +13,8 @@ Thanks for your interest. NIVISO is a local-first, bilingual PDF reader and note
 Requirements: Node.js 20+ and npm.
 
 ```bash
-git clone https://github.com/ssmns/nivisio.git
-cd nivisio
+git clone https://github.com/ssmns/niviso.git
+cd niviso
 npm install
 npm run dev
 ```

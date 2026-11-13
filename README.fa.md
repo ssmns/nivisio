@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ssmns/nivisio/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-f43f5e" /></a>
+  <a href="https://github.com/ssmns/niviso/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-f43f5e" /></a>
   <img alt="React 19" src="https://img.shields.io/badge/React-19-61dafb" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-3178c6" />
   <img alt="Capacitor 6" src="https://img.shields.io/badge/Capacitor-6-119eff" />
@@ -89,8 +89,8 @@
 پیش‌نیاز: Node.js 20+ و npm.
 
 ```bash
-git clone https://github.com/ssmns/nivisio.git
-cd nivisio
+git clone https://github.com/ssmns/niviso.git
+cd niviso
 npm install
 npm run dev
 ```
@@ -147,7 +147,7 @@ npx cap sync android
 ## ساختار پروژه
 
 ```text
-nivisio/
+niviso/
 ├── src/
 │   ├── pages/                 # کتابخانه، خواننده، قالب‌ها، درباره
 │   ├── components/            # UI مشترک و لایه‌های خواننده/صفحه

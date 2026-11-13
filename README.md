@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ssmns/nivisio/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-f43f5e" /></a>
+  <a href="https://github.com/ssmns/niviso/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-f43f5e" /></a>
   <img alt="React 19" src="https://img.shields.io/badge/React-19-61dafb" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-3178c6" />
   <img alt="Capacitor 6" src="https://img.shields.io/badge/Capacitor-6-119eff" />
@@ -23,7 +23,7 @@
 
 ---
 
-> **Repository:** [github.com/ssmns/nivisio](https://github.com/ssmns/nivisio)
+> **Repository:** [github.com/ssmns/niviso](https://github.com/ssmns/niviso)
 >
 > [Full Persian feature list and changelog](./CHANGELOG.fa.md)
 
@@ -95,8 +95,8 @@ matching the modern Android app identity and logo.
 Requirements: Node.js 20+ and npm.
 
 ```bash
-git clone https://github.com/ssmns/nivisio.git
-cd nivisio
+git clone https://github.com/ssmns/niviso.git
+cd niviso
 npm install
 npm run dev
 ```
@@ -153,7 +153,7 @@ NIVISO is offline by design:
 ## Project structure
 
 ```text
-nivisio/
+niviso/
 ├── src/
 │   ├── pages/                 # Library, reader, templates, about
 │   ├── components/            # Shared UI and reader/page layers

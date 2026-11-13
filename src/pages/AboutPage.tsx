@@ -355,8 +355,8 @@ export function AboutPage() {
               {t('مستندات:', 'Docs:')} <code>README.md</code> {t('و', 'and')}{' '}
               <code>AGENTS.md</code>
               {' · '}
-              <a href="https://github.com/ssmns/nivisio" target="_blank" rel="noreferrer">
-                github.com/ssmns/nivisio
+              <a href="https://github.com/ssmns/niviso" target="_blank" rel="noreferrer">
+                github.com/ssmns/niviso
               </a>
             </p>
           </article>

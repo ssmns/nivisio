@@ -223,7 +223,7 @@ Before calling a change done:
 
 1. `./script.sh verify` (typecheck + file-size check + build)
 2. `./script.sh dev`, then:
-   - import `public/samples/nivisio-guide.pdf` (or the sample button)
+   - import `public/samples/niviso-guide.pdf` (or the sample button)
    - highlight text and draw with pen, pencil and highlighter; test stylus pressure
      if hardware is available
    - add tape, text (Persian + English), image, chart, link and sticky note

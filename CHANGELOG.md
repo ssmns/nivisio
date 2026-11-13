@@ -46,7 +46,7 @@ All notable changes to NIVISO are documented here. The format follows [Keep a Ch
 
 ### Repository
 
-- [github.com/ssmns/nivisio](https://github.com/ssmns/nivisio)
+- [github.com/ssmns/niviso](https://github.com/ssmns/niviso)
 
 ---
 

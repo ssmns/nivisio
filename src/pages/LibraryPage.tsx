@@ -187,7 +187,7 @@ export function LibraryPage({ theme, onTheme }: LibraryPageProps) {
 
   const importSample = async () => {
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}samples/nivisio-guide.pdf`)
+      const response = await fetch(`${import.meta.env.BASE_URL}samples/niviso-guide.pdf`)
       if (!response.ok) throw new Error('not found')
       const blob = await response.blob()
       const file = new File([blob], t('راهنمای نی‌ویسو.pdf', 'NIVISO guide.pdf'), { type: 'application/pdf' })
