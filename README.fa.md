@@ -3,7 +3,10 @@
 # نی‌ویسو (NIVISO)
 
 <p align="center">
-  <img src="./docs/logo-full-light.png" alt="نی‌ویسو" width="560" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo-full-dark.png" />
+    <img src="./docs/logo-full-light.png" alt="نی‌ویسو" width="620" />
+  </picture>
 </p>
 
 <p align="center">
@@ -192,7 +195,10 @@ niviso/
 ## توسعه‌دهنده
 
 <p align="right">
-  <img src="./docs/logo-full-light.png" alt="نی‌ویسو" width="320" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo-wordmark-dark.png" />
+    <img src="./docs/logo-wordmark-light.png" alt="نی‌ویسو" width="320" />
+  </picture>
 </p>
 <p align="right">
   <img src="./docs/jadoo-studio.png" alt="Jadoo Studio" width="300" />

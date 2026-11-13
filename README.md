@@ -1,7 +1,10 @@
 # NIVISO
 
 <p align="center">
-  <img src="./docs/logo-full-light.png" alt="NIVISO" width="560" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo-full-dark.png" />
+    <img src="./docs/logo-full-light.png" alt="NIVISO" width="620" />
+  </picture>
 </p>
 
 <p align="center">
@@ -198,7 +201,10 @@ Contributions are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) and 
 ## Developer
 
 <p align="left">
-  <img src="./docs/logo-full-light.png" alt="NIVISO" width="320" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo-wordmark-dark.png" />
+    <img src="./docs/logo-wordmark-light.png" alt="NIVISO" width="320" />
+  </picture>
 </p>
 <p align="left">
   <img src="./docs/jadoo-studio.png" alt="Jadoo Studio" width="300" />
